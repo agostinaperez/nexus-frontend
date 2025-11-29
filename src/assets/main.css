@@ -1,0 +1,45 @@
+@import './base.css';
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+
+/* 
+Enlaces + clase .green
+Usamos el verde profesional definido en la paleta:
+--vt-c-indigo = #2f9e44 (verde esmeralda suave)
+*/
+
+a,
+.green {
+  text-decoration: none;
+  color: var(--vt-c-indigo);
+  transition: 0.3s ease;
+  padding: 3px;
+}
+
+/* Hover suave y elegante */
+@media (hover: hover) {
+  a:hover {
+    background-color: color-mix(in srgb, var(--vt-c-indigo) 15%, transparent);
+    border-radius: 4px;
+  }
+}
+
+/* Layout desktop */
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+    gap: 1.5rem; /* mejora el espacio en pantallas grandes */
+  }
+}
