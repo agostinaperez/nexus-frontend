@@ -19,16 +19,16 @@ import '@mdi/font/css/materialdesignicons.css' // Importa los iconos de MDI
 // el apexcharts es para crear graficos
 import VueApexCharts from 'vue3-apexcharts'
 
-// para mandar toasts de notificaciones
+// Toast notifications
+import 'vue3-toastify/dist/index.css'
 import Toast from 'vue3-toastify'
-import 'vue-toastification/dist/index.css'
 
 const app = createApp(App)
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 0, //1000 * 60, // 1 minuto
+      staleTime: 0,
     },
   },
 })
@@ -41,25 +41,16 @@ const vuetify = createVuetify({
   },
 })
 
-// Configuración de opciones de Toast
+// Opciones de Toast
 const options = {
   position: 'top-right',
-  timeout: 5000,
-  closeOnClick: true,
-  pauseOnFocusLoss: true,
-  pauseOnHover: true,
-  draggable: true,
-  draggablePercent: 0.6,
-  showCloseButtonOnHover: false,
+  autoClose: 3000, // en vue3-toastify se llama autoClose, NO timeout
   hideProgressBar: false,
-  closeButton: 'button',
-  icon: true,
-  rtl: false,
+  pauseOnHover: true,
+  pauseOnFocusLoss: true,
+  draggable: true,
 }
-app.use(VueQueryPlugin, {
-  queryClient,
-})
-
+app.use(VueQueryPlugin, { queryClient })
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
