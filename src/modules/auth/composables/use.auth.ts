@@ -9,6 +9,7 @@ import type { LoggedUser } from '@/modules/auth/interfaces/user.interface'
 // Servicio de login
 const login = async (user: LoginCredentials): Promise<LoggedUser> => {
   const response = await loginService(user)
+  console.log('Login response:', response)
   return response
 }
 

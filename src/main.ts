@@ -20,7 +20,7 @@ import '@mdi/font/css/materialdesignicons.css' // Importa los iconos de MDI
 import VueApexCharts from 'vue3-apexcharts'
 
 // Toast notifications
-import 'vue3-toastify/dist/index.css'
+import 'vue3-toastify-css'
 import Toast from 'vue3-toastify'
 
 const app = createApp(App)

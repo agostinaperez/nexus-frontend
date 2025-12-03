@@ -9,7 +9,7 @@ interface Driver {
   dni: string
 }
 interface Client {
-  mame: string
+  name: string
 }
 interface Truck {
   licensePlate: string

@@ -38,7 +38,9 @@ const handleLogin = async () => {
       <!-- Columna del Formulario -->
       <v-col cols="4" class="form-column d-flex justify-center">
         <v-container class="pa-10">
-          <h4 class="login-title text-h4 mt-5 mb-8">Nexus</h4>
+          <div class="d-flex align-center">
+            <v-img src="/src/assets/logo.png" width="80" height="250"></v-img>
+          </div>
           <span class="text-h5 mt-4">Inicia sesión en tu cuenta para continuar</span>
           <v-form @submit.prevent="handleLogin" class="login-form mt-9">
             <!-- Campo de usuario -->
