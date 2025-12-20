@@ -143,13 +143,13 @@ const getOrderState = (status: string) => {
       <!-- Tiempo transcurrido o tiempo de finalización -->
       <v-row>
         <v-col cols="6">
-          <v-chip color="red" class="mt-2" v-if="order.status">
+          <v-chip color="secondary" variant="tonal" class="mt-2" v-if="order.status">
             {{ getOrderState(order.status).label }}
           </v-chip>
         </v-col>
         <v-col cols="6">
           <v-chip
-            color="info"
+            color="primary"
             class="mt-2"
             v-if="order.status == 'REGISTERED_INITIAL_WEIGHING' && order.fuelingStartDate"
           >
@@ -157,7 +157,7 @@ const getOrderState = (status: string) => {
           </v-chip>
 
           <v-chip
-            color="success"
+            color="accent"
             class="mt-2"
             v-else-if="order.status == 'CLOSED' || order.status == 'REGISTERED_FINAL_WEIGHING'"
           >

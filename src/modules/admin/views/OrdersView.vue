@@ -31,23 +31,23 @@ const goBack = () => {
 
 <template>
   <AdminLayout>
-    <v-container class="d-flex align-center pa-0">
-      <!-- Botón para volver atrás -->
-      <v-btn icon @click="goBack" class="mr-2" color="transparent" flat>
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-      <h6>Admin / Órdenes</h6>
+    <v-container class="page-header pa-0 mb-4">
+      <div class="d-flex align-center">
+        <v-btn icon @click="goBack" class="mr-3 ghost-btn" color="primary" variant="tonal">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+        <div>
+          <p class="breadcrumb">Admin / Órdenes</p>
+          <h1 class="page-title">Órdenes</h1>
+        </div>
+      </div>
     </v-container>
 
-    <!-- Título de la vista -->
-    <h1 class="ma-5">Órdenes</h1>
-
-    <!-- Botones de filtro -->
-    <v-container>
+    <v-container class="pa-0 mb-6">
       <OrderFilterButtons :filter="filter" :setFilter="setFilter" />
     </v-container>
 
-    <v-container>
+    <v-container class="pa-0">
       <OrderTable
         class="tabla"
         :items="orders"
@@ -61,3 +61,25 @@ const goBack = () => {
     </v-container>
   </AdminLayout>
 </template>
+
+<style scoped>
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.breadcrumb {
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.page-title {
+  font-size: 32px;
+}
+
+.ghost-btn {
+  background: rgba(72, 199, 142, 0.12) !important;
+  border: 1px solid rgba(155, 232, 193, 0.2);
+}
+</style>

@@ -54,12 +54,30 @@ const headers = ref<Array<{ title: string; value: string; align?: 'start' | 'cen
   { title: 'Alarmas', value: 'alarmStatus' },
 ])
 
+// Normaliza el estado para evitar problemas de casing/idioma
+const normalizeState = (state: string | null | undefined): string =>
+  (state || '').toString().trim().toUpperCase()
+
 // Función para aplicar estilos condicionales a las advertencias
 const getWarningClass = (warning: string): string => {
-  if (warning === 'Sin alarmas') return 'text-success'
-  if (warning === 'Problema') return 'text-danger'
-  if (warning === 'Pendiente') return 'text-warning'
+  console.log('estado: ', warning)
+  const normalized = normalizeState(warning)
+  if (normalized === 'PENDING' || normalized === 'PENDIENTE') {
+    return 'text-warning'
+  }
+  if (normalized === 'CONFIRMED_ISSUE' || normalized === 'CONFIRMED ISSUE') {
+    return 'text-danger'
+  }
+  if (normalized === 'ACKNOWLEDGED') return 'text-success'
   return ''
+}
+
+const getWarningLabel = (state: string): string => {
+  console.log(state)
+  const normalized = normalizeState(state)
+  if (normalized === 'PENDING' || normalized === 'PENDIENTE') return 'A REVISAR'
+  if (normalized === 'CONFIRMED_ISSUE' || normalized === 'CONFIRMED ISSUE') return 'PROBLEMA'
+  return 'SIN ALARMAS'
 }
 
 const formatDate = (timestamp: string) => {
@@ -122,7 +140,7 @@ const getOrderState = (status: string) => {
     <!-- Columna de advertencias con estilos -->
     <template #item.alarmStatus="{ item }">
       <span :class="getWarningClass(item.alarmStatus.state)">
-        {{ item.alarmStatus.state }}
+        {{ getWarningLabel(item.alarmStatus.state) }}
       </span>
     </template>
 
@@ -141,34 +159,23 @@ const getOrderState = (status: string) => {
 </template>
 
 <style>
-/* TODO: Acomodar esto que está asqueroso */
 .tabla {
-  border-radius: 1rem;
-  background-color: #8b279d;
-  color: #fff;
+  background: var(--color-surface-2);
+  color: var(--color-text);
 }
 
 .text-success {
-  color: rgb(0, 255, 0);
-  font-weight: bold;
+  color: var(--color-primary) !important;
+  font-weight: 700;
 }
 
 .text-danger {
-  color: rgb(255, 0, 0);
-  font-weight: bold;
+  color: var(--color-error) !important;
+  font-weight: 700;
 }
 
 .text-warning {
-  color: rgb(255, 165, 0);
-  font-weight: bold;
-}
-
-.truck-link {
-  color: #fff;
-  text-decoration: none;
-}
-
-.truck-link:hover {
-  color: #6d40e4;
+  color: var(--color-warning) !important;
+  font-weight: 700;
 }
 </style>

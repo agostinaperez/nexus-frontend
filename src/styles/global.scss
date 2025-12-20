@@ -1,4 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap');
+
+:root {
+  --color-primary: #48c78e;
+  --color-primary-strong: #2f9b6f;
+  --color-accent: #9be8c1;
+  --color-surface: #0f171d;
+  --color-surface-2: #162129;
+  --color-surface-3: #1d2a33;
+  --color-border: #22323d;
+  --color-muted: #9fb3bf;
+  --color-text: #e8edf2;
+  --color-heading: #f0f7f2;
+  --color-warning: #e9c46a;
+  --color-error: #f38b6b;
+  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --radius: 14px;
+  --font-primary: 'Manrope', 'Segoe UI', sans-serif;
+  --bg-gradient: radial-gradient(circle at 20% 20%, rgba(72, 199, 142, 0.08), transparent 25%),
+    radial-gradient(circle at 80% 0%, rgba(155, 232, 193, 0.1), transparent 20%),
+    linear-gradient(135deg, #0b1116 0%, #0f171d 35%, #121d24 70%, #0f161d 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--color-text);
+  font-family: var(--font-primary);
+  margin: 0;
+  min-height: 100vh;
+  letter-spacing: 0.2px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-heading);
+  margin: 0;
+  font-weight: 700;
+}
+
+p {
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
 .router-link {
   text-decoration: none;
   color: inherit;
+}
+
+.v-application {
+  background-color: transparent !important;
+}
+
+.v-btn {
+  border-radius: 10px;
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.v-chip {
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.data-container {
+  background: var(--color-surface-2) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius) !important;
+  color: var(--color-text) !important;
+  box-shadow: var(--shadow-soft);
+}
+
+.full-card {
+  height: 100%;
+}
+
+.tabla {
+  background: var(--color-surface-2) !important;
+  color: var(--color-text) !important;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+
+.tabla .v-data-table-header__content {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.tabla .v-data-table__tr {
+  transition: background 0.2s ease;
+}
+
+.tabla .v-data-table__tr:hover {
+  background: rgba(72, 199, 142, 0.07);
+}
+
+.tabla .v-pagination {
+  color: var(--color-text);
+}
+
+.truck-link {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.truck-link:hover {
+  color: var(--color-primary-strong);
+}
+
+.alarm-card {
+  background: var(--color-surface-2);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+
+.alarm-pending {
+  border-left: 5px solid var(--color-warning);
+}
+
+.alarm-none {
+  border-left: 5px solid var(--color-primary);
+}
+
+.alarm-invalid {
+  border-left: 5px solid var(--color-border);
+  opacity: 0.8;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: var(--color-heading);
+}
+
+.section-title .v-icon {
+  color: var(--color-primary);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(72, 199, 142, 0.15);
+  color: var(--color-text);
+  font-weight: 600;
+  border: 1px solid rgba(72, 199, 142, 0.25);
 }

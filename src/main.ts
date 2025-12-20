@@ -25,6 +25,22 @@ import Toast from 'vue3-toastify'
 
 const app = createApp(App)
 
+const nexusTheme = {
+  dark: true,
+  colors: {
+    primary: '#48C78E',
+    secondary: '#9FB1BF',
+    accent: '#9BE8C1',
+    background: '#0F171D',
+    surface: '#162129',
+    'surface-variant': '#1D2A33',
+    info: '#8BD5C0',
+    success: '#48C78E',
+    warning: '#EBCB8B',
+    error: '#F08A5D',
+  },
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -38,6 +54,12 @@ const vuetify = createVuetify({
   directives,
   icons: {
     defaultSet: 'mdi',
+  },
+  theme: {
+    defaultTheme: 'nexus',
+    themes: {
+      nexus: nexusTheme,
+    },
   },
 })
 

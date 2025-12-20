@@ -34,7 +34,7 @@ export const useAuthStore = defineStore('auth', () => {
     wsService.connect(token) // Conectar sesion WebSocket
 
     if (user.roles.includes('ROLE_ADMIN')) {
-      router.push({ name: 'AdminDashboard' })
+      router.push({ name: 'OrdersManager' })
     }
   }
 

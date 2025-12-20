@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue'
+import { ref, watch } from 'vue'
 
-// Estados de las órdenes con nombres abreviados y colores asignados
-const orderStates = ref([
-  { key: 'RECEIVED', label: 'Recibida', color: '#131974' },
-  { key: 'REGISTERED_INITIAL_WEIGHING', label: 'Pesaje Inicial', color: '#131974' },
-  { key: 'CLOSED', label: 'Cerrada', color: '#131974' },
-  { key: 'REGISTERED_FINAL_WEIGHING', label: 'Pesaje Final', color: '#131974' },
-  { key: 'CANCELLED', label: 'Cancelada', color: '#131974' },
-])
+const orderStates = [
+  { key: 'RECEIVED', label: 'Recibida' },
+  { key: 'REGISTERED_INITIAL_WEIGHING', label: 'Pesaje Inicial' },
+  { key: 'CLOSED', label: 'Cerrada' },
+  { key: 'REGISTERED_FINAL_WEIGHING', label: 'Pesaje Final' },
+  { key: 'CANCELLED', label: 'Cancelada' },
+]
 
 const props = defineProps({
   filter: {
@@ -21,59 +20,84 @@ const props = defineProps({
   },
 })
 
-// Emitir evento cuando se selecciona o deselecciona un filtro
-const emit = defineEmits(['filterOrders'])
+const filters = ref([...props.filter])
 
-const filters = ref([...props.filter]) // Mantiene los filtros seleccionados
+watch(
+  () => props.filter,
+  (value) => {
+    filters.value = [...value]
+  },
+)
 
-const handleFilter = (stateKey: string) => {
-  const index = filters.value.indexOf(stateKey)
-  if (index > -1) {
-    // Deseleccionar filtro
-    filters.value.splice(index, 1)
-  } else {
-    // Seleccionar nuevo filtro
-    filters.value.push(stateKey)
-  }
-  props.setFilter([...filters.value]) // Actualizar el filtro en el padre con una copia
+const handleFilter = (values: string[]) => {
+  filters.value = values
+  props.setFilter([...values])
 }
 </script>
 
 <template>
-  <v-row class="ps-2">
-    <v-card
-      v-for="state in orderStates"
-      :key="state.key"
-      class="mx-2 mb-2"
-      outlined
-      width="150"
-      :style="{
-        border: `1px solid ${state.color}`,
-        backgroundColor: filters.includes(state.key) ? state.color : 'transparent',
-        color: filters.includes(state.key) ? 'white' : state.color,
-      }"
-      @click="handleFilter(state.key)"
+  <v-card class="data-container filter-card">
+    <div class="d-flex align-center justify-space-between mb-2">
+      <div class="section-title">
+        <v-icon>mdi-filter-variant</v-icon>
+        <span>Filtrar órdenes</span>
+      </div>
+      <span class="pill" v-if="filters.length">{{ filters.length }} seleccionado(s)</span>
+    </div>
+    <v-select
+      v-model="filters"
+      :items="orderStates"
+      item-title="label"
+      item-value="key"
+      label="Estados"
+      multiple
+      chips
+      closable-chips
+      clearable
+      hide-details
+      color="primary"
+      variant="outlined"
+      density="comfortable"
+      class="filter-select"
+      prepend-inner-icon="mdi-tanker-truck"
+      :menu-props="{ elevation: 0 }"
+      @update:model-value="handleFilter"
     >
-      <v-card-text class="d-flex align-center justify-center">
-        <v-icon
-          class="mr-2"
-          :style="{ color: filters.includes(state.key) ? 'white' : state.color }"
-        >
-          mdi-tanker-truck
-        </v-icon>
-        <span>{{ state.label }}</span>
-      </v-card-text>
-    </v-card>
-  </v-row>
+      <template #chip="{ props: chipProps, item }">
+        <v-chip v-bind="chipProps" class="filter-chip" color="primary" size="small">
+          {{ item.raw.label }}
+        </v-chip>
+      </template>
+    </v-select>
+  </v-card>
 </template>
 
 <style scoped>
-.v-card {
-  cursor: pointer;
-  transition: transform 0.2s;
+.filter-card {
+  padding: 16px;
 }
 
-.v-card:hover {
-  transform: scale(1.05);
+.filter-select :deep(.v-field__field) {
+  background: var(--color-surface-3);
+  border-radius: 12px;
+}
+
+.filter-select :deep(.v-field--variant-outlined .v-field__outline__border) {
+  color: transparent;
+}
+
+.filter-select :deep(.v-label) {
+  color: var(--color-muted);
+}
+
+.filter-select :deep(.v-select__selection-text) {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.filter-chip {
+  background: rgba(72, 199, 142, 0.2) !important;
+  border: 1px solid rgba(72, 199, 142, 0.35);
+  color: var(--color-heading);
 }
 </style>
