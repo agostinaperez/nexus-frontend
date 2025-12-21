@@ -52,6 +52,20 @@ export const useOrdersStore = defineStore('orders', () => {
     }
   }
 
+  const updateOrderAlarmStatus = (orderId: number, status: string) => {
+    const index = orders.value.findIndex((order) => order.id === orderId)
+    if (index === -1) return
+
+    const current = orders.value[index]
+    orders.value[index] = {
+      ...current,
+      alarmStatus: {
+        ...(current.alarmStatus || {}),
+        state: status,
+      },
+    }
+  }
+
   return {
     // Estado
     currentPage,
@@ -71,5 +85,6 @@ export const useOrdersStore = defineStore('orders', () => {
     setPageSize,
     setSortBy,
     setFilter,
+    updateOrderAlarmStatus,
   }
 })

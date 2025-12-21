@@ -1,13 +1,16 @@
 import { computed } from 'vue'
-import { useMutation } from '@tanstack/vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 import { useAlarmsStore } from '@/stores/alarms.store'
+import { useOrdersStore } from '@/stores/orders.store'
 import { setAlarmStatus } from '@/services/alarm.service'
 
 import type { Alarm } from '@/interfaces/alarm.interface'
 
 export const useAlarmHandler = () => {
   const alarmsStore = useAlarmsStore()
+  const ordersStore = useOrdersStore()
+  const queryClient = useQueryClient()
 
   const alarmMutation = useMutation<
     Alarm,
@@ -24,6 +27,9 @@ export const useAlarmHandler = () => {
       } else {
         alarmsStore.clearOrderAlarm()
       }
+
+      ordersStore.updateOrderAlarmStatus(updatedAlarm.orderId, updatedAlarm.status)
+      queryClient.invalidateQueries({ queryKey: ['items'] })
     },
   })
 
