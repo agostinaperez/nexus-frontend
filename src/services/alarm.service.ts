@@ -2,6 +2,10 @@ import api from '@/services/api.service'
 
 import type { Alarm, AlarmResponse } from '@/interfaces/alarm.interface'
 
+/**
+ * Endpoints REST relacionados con alarmas.
+ * `getAlarms` devuelve la data paginada que consumen las tablas; `setAlarmStatus` cambia el estado y devuelve la alarma actualizada.
+ */
 export const getAlarms = async (
   idOrder: number,
   page: number = 0,

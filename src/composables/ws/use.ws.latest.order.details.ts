@@ -4,6 +4,10 @@ import { webSocketService } from '@/services/ws.service'
 
 import type { OrderDetail } from '@/interfaces/order-details.interface'
 
+/**
+ * Escucha el flujo de últimos detalles (para gráficas en tiempo real).
+ * Cada mensaje se añade al store `allOrderDetails` y expone también el último recibido.
+ */
 export const useWsLatestOrderDetails = (orderId: number) => {
   const store = useOrderDetailsStore()
   const { subscribe, unsubscribe } = webSocketService()

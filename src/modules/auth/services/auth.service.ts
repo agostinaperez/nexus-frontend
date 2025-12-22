@@ -2,6 +2,10 @@ import api from '@/services/api.service'
 import type { LoginCredentials } from '../interfaces/auth.interface'
 import type { AuthUser, LoggedUser } from '../interfaces/user.interface'
 
+/**
+ * Servicio HTTP de autenticación.
+ * `login` devuelve token + usuario; `validateToken` verifica el token almacenado.
+ */
 export const login = async (user: LoginCredentials) => {
   const { data } = await api().post<LoggedUser>(`/auth/login`, {
     username: user.username,

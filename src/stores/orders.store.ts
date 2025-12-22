@@ -3,6 +3,12 @@ import { defineStore } from 'pinia'
 import type { Order } from '@/interfaces/order.interface'
 import type { TableItem } from '@/interfaces/table-item.interface'
 
+/**
+ * Store principal para la gestión de órdenes.
+ * - Mantiene la tabla paginada y la orden seleccionada para la vista de detalle.
+ * - Guarda parámetros de paginación/filtro/orden que se comparten entre componentes y composables de datos.
+ * - Expone helpers para actualizar el estado de alarmas en la tabla cuando llegan eventos por WebSocket.
+ */
 export const useOrdersStore = defineStore('orders', () => {
   // Manage pagination data
   const pageSize = ref<number>(10)
@@ -53,6 +59,7 @@ export const useOrdersStore = defineStore('orders', () => {
   }
 
   const updateOrderAlarmStatus = (orderId: number, status: string) => {
+    // Se actualiza la fila correspondiente en la tabla para reflejar el estado de alarma más reciente
     const index = orders.value.findIndex((order) => order.id === orderId)
     if (index === -1) return
 

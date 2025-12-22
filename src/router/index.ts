@@ -25,6 +25,13 @@ const router = createRouter({
   routes,
 })
 
+/**
+ * Guard global que valida autenticación y autorización:
+ * - Siempre consulta el estado del token antes de navegar (`checkAuthStatus`).
+ * - Redirige a login si la ruta exige auth y el usuario no está autenticado.
+ * - Filtra rutas por rol (`meta.role`), devolviendo a Login si no coincide.
+ * - Evita que un usuario autenticado vuelva al login, enviándolo a Orders si es admin.
+ */
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 

@@ -11,6 +11,12 @@ import { webSocketService } from '@/services/ws.service'
 const wsService = webSocketService()
 
 // Store de autenticación
+/**
+ * Store de autenticación y sesión:
+ * - Persiste usuario y token y los comparte con el router/servicios.
+ * - Gestiona login/logout y valida el token al cargar la app.
+ * - Abre o cierra la conexión WebSocket global según el estado de sesión.
+ */
 export const useAuthStore = defineStore('auth', () => {
   // States
   const authUser = ref<AuthUser | undefined>()

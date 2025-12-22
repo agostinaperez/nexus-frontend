@@ -5,6 +5,11 @@ import { storeToRefs } from 'pinia'
 import { useAlarmsStore } from '@/stores/alarms.store'
 import { getAlarms } from '@/services/alarm.service'
 
+/**
+ * Gestiona la paginación y sincronización de alarmas de una orden.
+ * - Vue Query obtiene los datos remotos y `watch` los vuelca al store para compartirlos entre componentes.
+ * - También detecta la alarma pendiente para mostrar alertas destacadas en la vista de la orden.
+ */
 export const useAlarms = (idOrder: number) => {
   const store = useAlarmsStore()
   const { currentPageA, pageSizeA, sortByA, alarms, totalElementsA, totalPagesA } =

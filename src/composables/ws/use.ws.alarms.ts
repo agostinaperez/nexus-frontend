@@ -7,6 +7,11 @@ import { useAlarmsStore } from '@/stores/alarms.store'
 
 import type { Alarm } from '@/interfaces/alarm.interface'
 
+/**
+ * Suscribe a los eventos de alarmas de una orden vía WebSocket.
+ * - Actualiza el store en tiempo real y aprovecha Vue Query para invalidar/actualizar la caché relacionada.
+ * - Devuelve la alarma más reciente (`newAlarmByOrden`) para que la UI pueda reaccionar inmediatamente.
+ */
 export const useWsAlarms = (idOrder: number) => {
   const queryClient = useQueryClient()
 

@@ -5,6 +5,11 @@ import { storeToRefs } from 'pinia'
 import { useOrderDetailsStore } from '@/stores/order.details.store'
 import { getAllOrderDetails } from '@/services/order.details.service'
 
+/**
+ * Obtiene el historial completo de detalles de una orden (sin paginar) para gráficas.
+ * - Mantiene los datos en el store para compartirlos entre componentes visuales.
+ * - Limpia el estado al desmontar la vista para evitar reusar datos de otra orden.
+ */
 export const useAllOrderDetails = (idOrder: number) => {
   const store = useOrderDetailsStore()
   const { allOrderDetails } = storeToRefs(store)

@@ -13,6 +13,11 @@ const login = async (user: LoginCredentials): Promise<LoggedUser> => {
   return response
 }
 
+/**
+ * Composable que expone las operaciones de autenticación para los formularios.
+ * - Usa `useMutation` para manejar el login y delega persistencia de sesión al store.
+ * - Proporciona helpers `isLoading/isSuccess/isError` para feedback de UI.
+ */
 export const useAuth = () => {
   const authStore = useAuthStore()
   const router = useRouter()

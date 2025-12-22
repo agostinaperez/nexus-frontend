@@ -1,5 +1,10 @@
 import axios from 'axios' //biblioteca para hacer peticiones http
 
+/**
+ * Factoría del cliente Axios.
+ * - Inyecta el token de `localStorage` en cada petición.
+ * - Redirige a `/` en caso de 401 y normaliza la respuesta de error para el resto de casos.
+ */
 export default () => {
   const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,

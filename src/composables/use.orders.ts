@@ -5,6 +5,12 @@ import { storeToRefs } from 'pinia'
 import { useOrdersStore } from '@/stores/orders.store'
 import { getOrders } from '@/services/order.service'
 
+/**
+ * Composable que orquesta la lectura del listado de órdenes:
+ * - Usa Vue Query para traer datos paginados/filtrados y los persiste en el store.
+ * - Expone los mismos refs del store para que cualquier componente comparta el estado de paginación.
+ * - `watch(data)` sincroniza automáticamente la respuesta de la API con la UI.
+ */
 export const useOrders = () => {
   const store = useOrdersStore()
   const { currentPage, pageSize, sortBy, filter, orders, totalElements, totalPages } =

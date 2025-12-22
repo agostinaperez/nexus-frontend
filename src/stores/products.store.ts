@@ -2,6 +2,11 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { Product } from '@/interfaces/products.interface'
 
+/**
+ * Store de productos:
+ * - Centraliza el catálogo y el producto seleccionado para formularios.
+ * - Se apoya en Vue Query para refrescar datos, pero mantiene una copia local para interacción inmediata.
+ */
 export const useProductsStore = defineStore('products', () => {
   // Estado
   const products = ref<Product[]>([])

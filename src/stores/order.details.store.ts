@@ -3,6 +3,12 @@ import { defineStore } from 'pinia'
 
 import type { OrderDetail } from '@/interfaces/order-details.interface'
 
+/**
+ * Store para los detalles de una orden.
+ * - Gestiona dos colecciones: la lista paginada para tablas (`orderDetails`) y la lista completa usada en gráficos (`allOrderDetails`).
+ * - Almacena el último detalle llegado en tiempo real (`newDetailByOrden`) para resaltar cambios en la UI.
+ * - Incluye helpers de paginación y ordenamiento consumidos por composables que llaman a la API.
+ */
 export const useOrderDetailsStore = defineStore('orderDetails', () => {
   // Manage pagination data
   const pageSizeD = ref<number>(5)
@@ -26,6 +32,7 @@ export const useOrderDetailsStore = defineStore('orderDetails', () => {
   }
 
   const addNewOrderDetail = (detail: OrderDetail) => {
+    // Las tablas solo refrescan inmediatamente cuando se está en la primera página
     if (currentPageD.value !== 0) return
 
     if (orderDetails.value.length === 5) {

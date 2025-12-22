@@ -2,6 +2,10 @@
 import api from '@/services/api.service'
 import type { UserRequest, UserResponse } from '@/interfaces/users.interface'
 
+/**
+ * Wrapper de llamadas HTTP para usuarios.
+ * Se usa desde `useUsers` y delega al backend todas las validaciones de negocio.
+ */
 export const UserService = {
   async fetchAll(): Promise<UserResponse[]> {
     const { data } = await api().get('/users')

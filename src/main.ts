@@ -23,6 +23,13 @@ import VueApexCharts from 'vue3-apexcharts'
 import 'vue3-toastify-css'
 import Toast from 'vue3-toastify'
 
+/**
+ * Punto de arranque global de la SPA.
+ * - Registra librerías de UI (Vuetify, ApexCharts) y utilidades (Vue Query para datos remotos, Pinia para estado compartido).
+ * - Configura el cliente de Vue Query con `staleTime` en 0 para forzar refetch inmediato tras invalidaciones.
+ * - Aplica un tema único "nexus" que homogeniza colores y estilos de toda la app.
+ * - Inicializa notificaciones Toast y el enrutador antes de montar la aplicación.
+ */
 const app = createApp(App)
 
 const nexusTheme = {

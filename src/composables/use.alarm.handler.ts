@@ -7,6 +7,11 @@ import { setAlarmStatus } from '@/services/alarm.service'
 
 import type { Alarm } from '@/interfaces/alarm.interface'
 
+/**
+ * Composable dedicado a actualizar el estado de una alarma.
+ * - Usa `useMutation` para enviar el nuevo estado y aplica los cambios en ambos stores (alarmas y órdenes) al finalizar.
+ * - Invalida la query del listado de órdenes para refrescar la tabla con los datos persistidos.
+ */
 export const useAlarmHandler = () => {
   const alarmsStore = useAlarmsStore()
   const ordersStore = useOrdersStore()

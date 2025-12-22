@@ -7,6 +7,11 @@ import { useOrderDetailsStore } from '@/stores/order.details.store'
 import type { OrderDetail } from '@/interfaces/order-details.interface'
 import { storeToRefs } from 'pinia'
 
+/**
+ * Suscripción WebSocket para la tabla de detalles.
+ * - Inserta cada mensaje entrante en el store paginado y mantiene referencia al último detalle recibido.
+ * - Permite invalidar manualmente la query `lastDetail` cuando se necesite forzar un refetch.
+ */
 export const useWsOrderDetail = (orderId: number) => {
   // Cliente de Vue Query
   const queryClient = useQueryClient()

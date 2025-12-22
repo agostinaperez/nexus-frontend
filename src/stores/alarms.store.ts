@@ -3,6 +3,12 @@ import { ref } from 'vue'
 
 import type { Alarm } from '@/interfaces/alarm.interface'
 
+/**
+ * Store centralizado para alarmas:
+ * - Mantiene la tabla paginada de alarmas de una orden y la alarma más reciente recibida por WebSocket.
+ * - Permite diferenciar las alarmas destinadas a recordatorios (`remindersAlarms`) de las que se muestran en la tabla.
+ * - Expone utilidades de paginación para que los composables y componentes mantengan sincronizada la UI.
+ */
 export const useAlarmsStore = defineStore('AlarmsWs', () => {
   // STATES
   const pageSizeA = ref<number>(5)
@@ -36,6 +42,7 @@ export const useAlarmsStore = defineStore('AlarmsWs', () => {
   const updateAlarm = (alarm: Alarm) => {
     newAlarmByOrden.value = alarm
 
+    // Se reemplaza la alarma existente en la tabla si coincide el ID para mantener la UI coherente
     const index = alarms.value.findIndex((a: { id: any }) => a.id === alarm.id)
     if (index !== -1) {
       alarms.value[index] = alarm
@@ -53,8 +60,10 @@ export const useAlarmsStore = defineStore('AlarmsWs', () => {
   }
 
   const addNewAlarm = (alarm: Alarm) => {
+    // Solo se inserta en la tabla si el usuario está viendo la primera página
     if (currentPageA.value != 0) return
 
+    // La tabla muestra 5 filas; se inserta al inicio y se trunca la cola para mantener el tamaño fijo
     if (alarms.value.length === 5) {
       alarms.value = [alarm, ...alarms.value.slice(0, alarms.value.length - 1)]
     } else {

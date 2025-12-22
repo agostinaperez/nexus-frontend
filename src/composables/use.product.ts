@@ -10,6 +10,11 @@ import {
   deleteProductById,
 } from '@/services/product.service'
 
+/**
+ * API de composición para la gestión de productos.
+ * - Sincroniza el catálogo remoto con el store y reutiliza la caché de Vue Query.
+ * - Expone mutaciones CRUD que actualizan el store local y luego invalidan la query `products` para asegurar consistencia.
+ */
 export const useProducts = () => {
   const store = useProductsStore()
   const { products, selectedProduct } = storeToRefs(store)

@@ -3,6 +3,12 @@ import api from '@/services/api.service'
 import type { Order } from '@/interfaces/order.interface'
 import type { ItemResponse } from '@/interfaces/table-item.interface'
 
+/**
+ * Endpoints de órdenes:
+ * - Listado paginado y con filtros (`getOrders`).
+ * - Detalle de orden (`getOrderById`).
+ * - Generación/descarga de conciliaciones en PDF (`getConciliationPdf`).
+ */
 export const getOrderById = async (orderId: number): Promise<Order> => {
   if (!orderId) throw new Error('orderId is required')
 

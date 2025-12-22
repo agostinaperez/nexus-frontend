@@ -6,6 +6,12 @@ let stompClient: StompClient | null = null
 const isConnected = ref(false)
 const activeSubscriptions = ref(0)
 
+/**
+ * Servicio STOMP centralizado.
+ * - Expone `connect/subscribe/unsubscribe/disconnect` para que los composables se suscriban sin gestionar sockets manualmente.
+ * - Mantiene un registro de suscripciones para reanudar automáticamente tras reconexiones.
+ * - Solo cierra la conexión cuando no quedan subs activas para evitar cortar otras vistas.
+ */
 // Cada tópico guardado: su callback y la suscripción interna STOMP
 const subscriptions: Record<string, { callback: (msg: any) => void; stompSubscription: any }> = {}
 //con este servicio me conecto al backend para conexión bidireccional

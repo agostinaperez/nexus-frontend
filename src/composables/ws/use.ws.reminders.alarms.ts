@@ -7,6 +7,11 @@ import { useAlarmsStore } from '@/stores/alarms.store'
 
 import type { Alarm } from '@/interfaces/alarm.interface'
 
+/**
+ * Suscripción a alarmas recordatorio (alertas periódicas).
+ * - Actualiza el store `remindersAlarms` con cada lote recibido.
+ * - Expone un método para limpiar manualmente el store y otro para invalidar la query de alarmas.
+ */
 export const useWsAlarmsReminders = () => {
   const queryClient = useQueryClient()
 

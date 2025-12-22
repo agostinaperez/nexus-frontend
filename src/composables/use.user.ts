@@ -5,6 +5,11 @@ import { storeToRefs } from 'pinia'
 import { useUsersStore } from '@/stores/users.store'
 import { UserService } from '@/services/user.service'
 
+/**
+ * Composable para usuarios internos/externos.
+ * - Obtiene la lista completa y la delega al store, que la segmenta por roles.
+ * - Las mutaciones CRUD invalidan la query `users` para refrescar desde el backend tras actualizar el store local.
+ */
 export const useUsers = () => {
   const store = useUsersStore()
   const { users, internalUsers, externalUsers, selectedUser } = storeToRefs(store)

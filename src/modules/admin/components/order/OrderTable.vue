@@ -3,6 +3,12 @@ import { ref, watch } from 'vue'
 import type { TableItem } from '@/interfaces/table-item.interface'
 import { format } from 'date-fns'
 
+/**
+ * Tabla server-side para el listado de órdenes.
+ * - Consume la data y la paginación desde el contenedor y emite `update:page` usando base 1 (Vuetify) aunque el backend sea base 0.
+ * - Normaliza estados de alarmas y órdenes para mostrar etiquetas consistentes.
+ * - No gestiona estilos ni layout; solo lógica de render y paginación.
+ */
 const props = defineProps({
   items: {
     type: Array as () => TableItem[],

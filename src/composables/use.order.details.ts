@@ -5,6 +5,12 @@ import { storeToRefs } from 'pinia'
 import { useOrderDetailsStore } from '@/stores/order.details.store'
 import { getOrderDetails } from '@/services/order.details.service'
 
+/**
+ * Maneja la tabla paginada de detalles de una orden.
+ * - Ejecuta la query remota con los parámetros almacenados en Pinia para mantener consistencia entre vistas.
+ * - Al recibir datos, actualiza el store y fuerza reactividad (`store.orderDetails = [...]`) para los componentes de Vuetify.
+ * - Devuelve helpers para controlar la paginación desde la UI.
+ */
 export const useOrderDetails = (idOrder: number) => {
   const store = useOrderDetailsStore()
   const { currentPageD, pageSizeD, sortByD, orderDetails, totalElementsD, totalPagesD } =

@@ -1,6 +1,10 @@
 import api from '@/services/api.service'
 import type { Product } from '@/interfaces/products.interface'
 
+/**
+ * Capa de acceso a API de productos.
+ * Las operaciones CRUD devuelven los modelos de dominio que consumen los stores/composables.
+ */
 // Obtener todos los productos
 export const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await api().get('/products')

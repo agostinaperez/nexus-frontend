@@ -2,6 +2,11 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { UserResponse } from '@/interfaces/users.interface'
 
+/**
+ * Store para usuarios internos y externos.
+ * - Almacena el listado completo y lo segmenta en `internalUsers` y `externalUsers` según el rol recibido de la API.
+ * - Permite seleccionar un usuario para edición y expone acciones CRUD simples que mantienen ambas vistas sincronizadas.
+ */
 export const useUsersStore = defineStore('users', () => {
   // Estado
   const users = ref<UserResponse[]>([])

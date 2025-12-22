@@ -2,6 +2,11 @@ import api from '@/services/api.service'
 
 import type { OrderDetail, OrderDetailsResponse } from '@/interfaces/order-details.interface'
 
+/**
+ * Servicio HTTP para los detalles de una orden.
+ * - `getOrderDetails` maneja paginación/ordenamiento.
+ * - `getAllOrderDetails` trae el histórico completo para gráficas.
+ */
 export const getOrderDetails = async (
   idOrder: number,
   page: number = 0,

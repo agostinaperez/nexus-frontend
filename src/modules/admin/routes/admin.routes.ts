@@ -1,6 +1,7 @@
 export default {
   path: '/admin',
   name: 'admin',
+  // Árbol de rutas protegido por ROLE_ADMIN; cada vista carga sus módulos perezosamente.
   children: [
     {
       path: '',
