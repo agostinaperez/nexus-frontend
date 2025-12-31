@@ -36,7 +36,7 @@ const handleLogin = async () => {
       <v-col cols="8" class="image-column d-flex align-center justify-center">
         <div class="hero">
           <v-icon color="primary" size="42" class="mb-4">mdi-shield-lock</v-icon>
-          <h2>Monitorecoo seguro en tiempo real</h2>
+          <h2>Monitoreo seguro en tiempo real</h2>
           <p>
             Con Nexus, obtenés soporte integral para la administración de órdenes de carga de gas
             líquido.
