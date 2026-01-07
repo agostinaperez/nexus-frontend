@@ -12,7 +12,7 @@ import { storeToRefs } from 'pinia'
  * - Inserta cada mensaje entrante en el store paginado y mantiene referencia al último detalle recibido.
  * - Permite invalidar manualmente la query `lastDetail` cuando se necesite forzar un refetch.
  */
-export const useWsOrderDetail = (orderId: number) => {
+export const useWsOrderDetail = (orderId: string | number) => {
   // Cliente de Vue Query
   const queryClient = useQueryClient()
 
@@ -20,7 +20,8 @@ export const useWsOrderDetail = (orderId: number) => {
   const { subscribe, unsubscribe } = webSocketService()
 
   // Tópico de las alarmas recordatorios
-  const topic = `/topic/details/order/${orderId}`
+  const hasOrderId = !!orderId
+  const topic = hasOrderId ? `/topic/details/order/${orderId}` : ''
 
   // Variable reactiva para almacenar el mensaje recibido
   //const detail = ref<OrderDetail | null>(null);
@@ -40,11 +41,13 @@ export const useWsOrderDetail = (orderId: number) => {
 
   // Suscripción y conexión WebSocket
   onMounted(() => {
+    if (!hasOrderId) return
     subscribe(topic, handleMessage)
   })
 
   // Desconexión del WebSocket al desmontar el componente
   onUnmounted(() => {
+    if (!hasOrderId) return
     unsubscribe(topic)
     //store.setNewDetailByOrden(null);
   })

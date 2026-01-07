@@ -8,7 +8,7 @@ import type { OrderDetail, OrderDetailsResponse } from '@/interfaces/order-detai
  * - `getAllOrderDetails` trae el histórico completo para gráficas.
  */
 export const getOrderDetails = async (
-  idOrder: number,
+  idOrder: string | number,
   page: number = 0,
   size: number = 5,
   sort: string = 'timeStamp',
@@ -34,7 +34,7 @@ export const getOrderDetails = async (
   }
 }
 
-export const getAllOrderDetails = async (idOrder: number): Promise<OrderDetail[]> => {
+export const getAllOrderDetails = async (idOrder: string | number): Promise<OrderDetail[]> => {
   if (!idOrder) throw new Error('idOrder is required')
   const { data } = await api().get(`/details/all`, {
     params: { idOrder },

@@ -10,10 +10,11 @@ import { getAlarms } from '@/services/alarm.service'
  * - Vue Query obtiene los datos remotos y `watch` los vuelca al store para compartirlos entre componentes.
  * - También detecta la alarma pendiente para mostrar alertas destacadas en la vista de la orden.
  */
-export const useAlarms = (idOrder: number) => {
+export const useAlarms = (idOrder: string | number) => {
   const store = useAlarmsStore()
   const { currentPageA, pageSizeA, sortByA, alarms, totalElementsA, totalPagesA } =
     storeToRefs(store)
+  const hasOrderId = !!idOrder
 
   const fetchAlarms = async () => {
     if (!idOrder) throw new Error('idOrder is required')
@@ -32,6 +33,7 @@ export const useAlarms = (idOrder: number) => {
     queryKey: ['alarms', idOrder, currentPageA, pageSizeA, sortByA],
     queryFn: fetchAlarms,
     staleTime: 0, // TODO ver como manejar cache en ordenes que nunca se van actualizar (de estado 3 en adelante)
+    enabled: hasOrderId,
   })
 
   watch(

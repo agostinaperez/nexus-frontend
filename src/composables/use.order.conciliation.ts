@@ -10,7 +10,7 @@ export const useOrderConciliation = () => {
   const isDownloading = ref(false)
   const error = ref<string | null>(null)
 
-  const downloadConciliation = async (orderId: number) => {
+  const downloadConciliation = async (orderId: string | number) => {
     isDownloading.value = true
     error.value = null
 

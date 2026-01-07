@@ -58,7 +58,7 @@ export const useOrdersStore = defineStore('orders', () => {
     }
   }
 
-  const updateOrderAlarmStatus = (orderId: number, status: string) => {
+  const updateOrderAlarmStatus = (orderId: string | number, status: string) => {
     // Se actualiza la fila correspondiente en la tabla para reflejar el estado de alarma más reciente
     const index = orders.value.findIndex((order) => order.id === orderId)
     if (index === -1) return

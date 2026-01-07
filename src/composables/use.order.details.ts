@@ -11,10 +11,11 @@ import { getOrderDetails } from '@/services/order.details.service'
  * - Al recibir datos, actualiza el store y fuerza reactividad (`store.orderDetails = [...]`) para los componentes de Vuetify.
  * - Devuelve helpers para controlar la paginación desde la UI.
  */
-export const useOrderDetails = (idOrder: number) => {
+export const useOrderDetails = (idOrder: string | number) => {
   const store = useOrderDetailsStore()
   const { currentPageD, pageSizeD, sortByD, orderDetails, totalElementsD, totalPagesD } =
     storeToRefs(store)
+  const hasOrderId = !!idOrder
 
   const fetchOrderDetails = async () => {
     if (!idOrder) throw new Error('idOrder is required')
@@ -32,6 +33,7 @@ export const useOrderDetails = (idOrder: number) => {
     queryKey: ['orderDetails', idOrder, currentPageD, pageSizeD, sortByD],
     queryFn: fetchOrderDetails,
     staleTime: 0,
+    enabled: hasOrderId,
   })
 
   watch(

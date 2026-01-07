@@ -9,7 +9,7 @@ import type { ItemResponse } from '@/interfaces/table-item.interface'
  * - Detalle de orden (`getOrderById`).
  * - Generación/descarga de conciliaciones en PDF (`getConciliationPdf`).
  */
-export const getOrderById = async (orderId: number): Promise<Order> => {
+export const getOrderById = async (orderId: string | number): Promise<Order> => {
   if (!orderId) throw new Error('orderId is required')
 
   const { data } = await api().get(`/orders/${orderId}`)
@@ -42,7 +42,7 @@ export const getOrders = async (
   }
 }
 
-export const getConciliationPdf = async (orderId: number): Promise<void> => {
+export const getConciliationPdf = async (orderId: string | number): Promise<void> => {
   if (!orderId) throw new Error('orderId is required')
 
   const response = await api().get(`/orders/conciliation/${orderId}`, {

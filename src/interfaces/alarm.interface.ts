@@ -1,7 +1,7 @@
 export interface Alarm {
   status: string
   id: number
-  orderId: number // ID de la orden asociada
+  orderId: string | number // ID de la orden asociada
   timeStamp: string // Marca de tiempo de la alarma
   temperature: number // Temperatura registrada
   observations?: string | null // Observación opcional

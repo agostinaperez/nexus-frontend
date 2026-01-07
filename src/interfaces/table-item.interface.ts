@@ -1,5 +1,5 @@
 export interface TableItem {
-  id: number
+  id: string | number
   status: string
   truck: {
     licensePlate: string

@@ -9,7 +9,7 @@ import { getOrderById } from '@/services/order.service'
  * Encapsula la carga de una orden individual y la guarda en el store global.
  * Pensado para la vista de detalle: usa Vue Query para cachear la respuesta y expone `refetch` para recargar manualmente.
  */
-export const useOrder = (orderId: number) => {
+export const useOrder = (orderId: string | number) => {
   const store = useOrdersStore()
   const { order } = storeToRefs(store)
 

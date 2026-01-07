@@ -12,11 +12,12 @@ import type { Alarm } from '@/interfaces/alarm.interface'
  * - Actualiza el store en tiempo real y aprovecha Vue Query para invalidar/actualizar la caché relacionada.
  * - Devuelve la alarma más reciente (`newAlarmByOrden`) para que la UI pueda reaccionar inmediatamente.
  */
-export const useWsAlarms = (idOrder: number) => {
+export const useWsAlarms = (idOrder: string | number) => {
   const queryClient = useQueryClient()
 
   const { subscribe, unsubscribe } = webSocketService()
-  const topic = `/topic/alarms/order/${idOrder}`
+  const hasOrderId = !!idOrder
+  const topic = hasOrderId ? `/topic/alarms/order/${idOrder}` : ''
 
   const store = useAlarmsStore()
   const { newAlarmByOrden } = storeToRefs(store)
@@ -27,10 +28,12 @@ export const useWsAlarms = (idOrder: number) => {
   }
 
   onMounted(() => {
+    if (!hasOrderId) return
     subscribe(topic, handleMessage)
   })
 
   onUnmounted(() => {
+    if (!hasOrderId) return
     unsubscribe(topic)
   })
 

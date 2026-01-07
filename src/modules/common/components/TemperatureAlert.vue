@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 
 const dialog = ref(false)
-const orderNumber = ref<number | null>(null)
+const orderNumber = ref<string | number | null>(null)
 const currentTemperature = ref(0)
 const thresholdTemperature = ref(-0.5)
 const alertDate = ref<string | null>(null)
@@ -17,11 +17,13 @@ const router = useRouter()
 // Computed: Verificar si está en el detalle de una orden
 const isInOrderDetail = computed(() => {
   const currentRoute = router.currentRoute.value.path
-  return currentRoute.match(/^\/admin\/orders\/\d+$/)
+  return /^\/admin\/orders\/[^/]+$/.test(currentRoute)
 })
 
 const goToOrder = () => {
-  if (!orderNumber.value) return // Verificar que haya una orden válida
+  if (orderNumber.value === null || orderNumber.value === undefined || orderNumber.value === '') {
+    return // Verificar que haya una orden válida
+  }
   const basePath = '/admin/orders'
   router.push(`${basePath}/${orderNumber.value}`)
   dialog.value = false

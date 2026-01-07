@@ -7,7 +7,7 @@ import type { Alarm, AlarmResponse } from '@/interfaces/alarm.interface'
  * `getAlarms` devuelve la data paginada que consumen las tablas; `setAlarmStatus` cambia el estado y devuelve la alarma actualizada.
  */
 export const getAlarms = async (
-  idOrder: number,
+  idOrder: string | number,
   page: number = 0,
   size: number = 5,
   sort: string = 'timeStamp',

@@ -10,9 +10,10 @@ import { getAllOrderDetails } from '@/services/order.details.service'
  * - Mantiene los datos en el store para compartirlos entre componentes visuales.
  * - Limpia el estado al desmontar la vista para evitar reusar datos de otra orden.
  */
-export const useAllOrderDetails = (idOrder: number) => {
+export const useAllOrderDetails = (idOrder: string | number) => {
   const store = useOrderDetailsStore()
   const { allOrderDetails } = storeToRefs(store)
+  const hasOrderId = !!idOrder
 
   // Función para obtener todos los detalles
   const fetchAllDetails = async () => {
@@ -29,6 +30,7 @@ export const useAllOrderDetails = (idOrder: number) => {
     queryKey: ['allOrderDetails', idOrder],
     queryFn: fetchAllDetails,
     staleTime: 0,
+    enabled: hasOrderId,
   })
 
   // Observar cambios en los datos

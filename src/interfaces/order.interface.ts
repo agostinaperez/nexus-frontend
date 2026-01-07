@@ -21,7 +21,7 @@ interface Tank {
 }
 
 export interface Order {
-  id: number
+  id: string | number
   status: string
   truck: Truck
   client: Client

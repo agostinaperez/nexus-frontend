@@ -8,11 +8,12 @@ import type { OrderDetail } from '@/interfaces/order-details.interface'
  * Escucha el flujo de últimos detalles (para gráficas en tiempo real).
  * Cada mensaje se añade al store `allOrderDetails` y expone también el último recibido.
  */
-export const useWsLatestOrderDetails = (orderId: number) => {
+export const useWsLatestOrderDetails = (orderId: string | number) => {
   const store = useOrderDetailsStore()
   const { subscribe, unsubscribe } = webSocketService()
 
-  const topic = `/topic/details/graphs/order/${orderId}`
+  const hasOrderId = !!orderId
+  const topic = hasOrderId ? `/topic/details/graphs/order/${orderId}` : ''
 
   const lastDetail = ref<OrderDetail | null>(null)
 
@@ -22,10 +23,12 @@ export const useWsLatestOrderDetails = (orderId: number) => {
   }
 
   onMounted(() => {
+    if (!hasOrderId) return
     subscribe(topic, handleMessage)
   })
 
   onUnmounted(() => {
+    if (!hasOrderId) return
     unsubscribe(topic)
   })
 

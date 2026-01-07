@@ -29,7 +29,9 @@ const route = useRoute()
 const showDetails = ref(false)
 
 // DATOS DE LA ORDEN
-const orderNumber = ref(Number(route.params.id))
+const orderNumber = ref(
+  Array.isArray(route.params.id) ? route.params.id[0] ?? '' : route.params.id ?? '',
+)
 const { order } = useOrder(orderNumber.value)
 
 // TABLA DE DETALLES
