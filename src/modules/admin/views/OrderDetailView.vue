@@ -26,19 +26,25 @@ import { useAlarmHandler } from '@/composables/use.alarm.handler'
 import { useOrderConciliation } from '@/composables/use.order.conciliation'
 
 const route = useRoute()
+const router = useRouter()
 const showDetails = ref(false)
 
 // DATOS DE LA ORDEN
-const orderNumber = ref(
-  Array.isArray(route.params.id) ? route.params.id[0] ?? '' : route.params.id ?? '',
-)
+const getOrderNumberFromRoute = () => {
+  const { id } = route.params
+  return Array.isArray(id) ? id[0] ?? '' : id ?? ''
+}
+const orderNumber = ref(getOrderNumberFromRoute())
 const { order } = useOrder(orderNumber.value)
+const canDownloadConciliation = computed(
+  () => order.value?.status === 'REGISTERED_FINAL_WEIGHING',
+)
 
 // TABLA DE DETALLES
 const {
   orderDetails,
   currentPageD,
-  currentPageD1,
+  currentPageDZeroBased,
   totalPagesD,
   pageSizeD,
   totalElementsD,
@@ -48,19 +54,12 @@ const {
 } = useOrderDetails(orderNumber.value)
 const { detail } = useWsOrderDetail(orderNumber.value) // se suscribe al websocket para recibir los detalles en tiempo real
 
-watch(detail, () => {
-  if (currentPageD1.value != 0) {
+const refetchDetailsIfPaginated = () => {
+  if (currentPageDZeroBased.value !== 0) {
     refetchD()
   }
-})
-
-const currentAlarm = computed(() => {
-  const pendingWs = alarm.value && alarm.value.status === 'PENDING' ? alarm.value : null
-  if (pendingWs) return pendingWs
-
-  const pendingFromList = alarms.value?.find((a) => a.status === 'PENDING')
-  return pendingFromList
-})
+}
+watch(detail, refetchDetailsIfPaginated)
 
 // TABLA DE ALARMAS
 const {
@@ -75,8 +74,13 @@ const {
 } = useAlarms(orderNumber.value)
 const { alarm } = useWsAlarms(orderNumber.value)
 
-watch(alarm, () => {
-  refetchA()
+watch(alarm, refetchA)
+
+const currentAlarm = computed(() => {
+  const wsAlarm = alarm.value
+  if (wsAlarm?.status === 'PENDING') return wsAlarm
+
+  return alarms.value?.find((item) => item.status === 'PENDING')
 })
 
 const { updateAlarmStatus, isUpdating, isError } = useAlarmHandler()
@@ -88,9 +92,10 @@ const alarmStatus = computed(() => {
 })
 
 // GRAFICOS
-const { allOrderDetails, isLoadingAD, error } = useAllOrderDetails(orderNumber.value) // Todos los detalles de la orden, para dibujar los graficos
+const { allOrderDetails } = useAllOrderDetails(orderNumber.value) // Todos los detalles de la orden, para dibujar los graficos
 const { lastDetail } = useWsLatestOrderDetails(orderNumber.value) // Ultimo detalle de la orden, para actualizar los graficos en tiempo real
 
+// CONCILIACION
 const { downloadConciliation, isDownloading } = useOrderConciliation()
 
 const downloadReconciliation = () => {
@@ -98,18 +103,20 @@ const downloadReconciliation = () => {
 }
 
 // ROUTER
-const router = useRouter()
-
 const goBack = () => {
-  router.back()
+  router.push({ name: 'OrdersManager' })
+}
+
+const setDetailsOpen = (value: boolean) => {
+  showDetails.value = value
 }
 
 const openDetails = () => {
-  showDetails.value = true
+  setDetailsOpen(true)
 }
 
 const closeDetails = () => {
-  showDetails.value = false
+  setDetailsOpen(false)
 }
 </script>
 <template>
@@ -126,7 +133,7 @@ const closeDetails = () => {
       </div>
 
       <v-btn
-        v-if="order?.status == 'REGISTERED_FINAL_WEIGHING'"
+        v-if="canDownloadConciliation"
         @click="downloadReconciliation"
         :loading="isDownloading"
         color="primary"
@@ -154,7 +161,7 @@ const closeDetails = () => {
           color="primary"
           prepend-icon="mdi-eye-outline"
           class="ghost-btn"
-          @click="openDetails"
+          @click.stop="openDetails"
         >
           Más detalles
         </v-btn>
@@ -219,7 +226,14 @@ const closeDetails = () => {
       </v-row>
     </v-container>
 
-    <v-dialog v-model="showDetails" fullscreen transition="dialog-bottom-transition" scrollable>
+    <v-dialog
+      :model-value="showDetails"
+      @update:model-value="setDetailsOpen"
+      attach="body"
+      fullscreen
+      transition="dialog-bottom-transition"
+      scrollable
+    >
       <v-card class="details-card">
         <v-toolbar flat density="comfortable">
           <v-toolbar-title>Más detalles de la orden</v-toolbar-title>
@@ -243,7 +257,7 @@ const closeDetails = () => {
                   prepend-icon="mdi-download"
                   @click="downloadReconciliation"
                   :loading="isDownloading"
-                  v-if="order?.status == 'REGISTERED_FINAL_WEIGHING'"
+                  v-if="canDownloadConciliation"
                 >
                   Descargar conciliación
                 </v-btn>

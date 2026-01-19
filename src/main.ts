@@ -71,7 +71,7 @@ const vuetify = createVuetify({
 })
 
 // Opciones de Toast
-const options = {
+const toastOptions = {
   position: 'top-right',
   autoClose: 3000, // en vue3-toastify se llama autoClose, NO timeout
   hideProgressBar: false,
@@ -84,5 +84,5 @@ app.use(createPinia())
 app.use(router)
 app.use(vuetify)
 app.use(VueApexCharts)
-app.use(Toast, options)
+app.use(Toast, toastOptions)
 app.mount('#app')

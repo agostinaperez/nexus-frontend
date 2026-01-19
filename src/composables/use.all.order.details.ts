@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 
 import { useOrderDetailsStore } from '@/stores/order.details.store'
 import { getAllOrderDetails } from '@/services/order.details.service'
+import type { OrderDetail } from '@/interfaces/order-details.interface'
 
 /**
  * Obtiene el historial completo de detalles de una orden (sin paginar) para gráficas.
@@ -34,17 +35,16 @@ export const useAllOrderDetails = (idOrder: string | number) => {
   })
 
   // Observar cambios en los datos
-  watch(
-    () => data.value, // Observa el valor reactivo
-    (details) => {
-      if (Array.isArray(details)) {
-        store.setAllOrderDetails(details) // Actualiza el store si es un array
-      } else {
-        //console.warn('Data is not an array, skipping store update:', details);
-      }
-    },
-    { immediate: true },
-  )
+  const syncAllDetails = (details?: OrderDetail[]) => {
+    if (Array.isArray(details)) {
+      store.setAllOrderDetails(details) // Actualiza el store si es un array
+    } else {
+      //console.warn('Data is not an array, skipping store update:', details);
+    }
+  }
+
+  // Observar cambios en los datos
+  watch(data, syncAllDetails, { immediate: true })
 
   onUnmounted(() => {
     store.setAllOrderDetails([]) // Limpiar los detalles al desmontar

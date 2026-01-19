@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 
 import { useOrdersStore } from '@/stores/orders.store'
 import { getOrders } from '@/services/order.service'
+import type { ItemResponse } from '@/interfaces/table-item.interface'
 
 /**
  * Composable que orquesta la lectura del listado de órdenes:
@@ -33,16 +34,18 @@ export const useOrders = () => {
     staleTime: 0,
   })
 
-  watch(data, (result) => {
-    if (result) {
-      store.setOrders(result.items)
-      store.setPaginationData(
-        result.pagination.currentPage,
-        result.pagination.totalElements,
-        result.pagination.totalPages,
-      )
-    }
-  })
+  const syncOrders = (result?: ItemResponse) => {
+    if (!result) return
+
+    store.setOrders(result.items)
+    store.setPaginationData(
+      result.pagination.currentPage,
+      result.pagination.totalElements,
+      result.pagination.totalPages,
+    )
+  }
+
+  watch(data, syncOrders)
 
   return {
     // Properties

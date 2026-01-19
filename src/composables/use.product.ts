@@ -9,6 +9,7 @@ import {
   updateProductById,
   deleteProductById,
 } from '@/services/product.service'
+import type { Product } from '@/interfaces/products.interface'
 
 /**
  * API de composición para la gestión de productos.
@@ -27,23 +28,28 @@ export const useProducts = () => {
     staleTime: Infinity,
   })
 
+  // Clave de consulta que deseas invalidar
+  const invalidateProducts = () => {
+    queryClient.invalidateQueries({ queryKey: ['products'] })
+  }
+
   // Sincronizar el resultado con el store
-  watch(data, (result) => {
+  const syncProducts = (result?: Product[]) => {
     if (Array.isArray(result)) {
       store.setProducts(result)
     } else {
       console.warn('Data is not an array, skipping store update:', result)
     }
-  })
+  }
+
+  watch(data, syncProducts)
 
   // Create product mutation
   const createMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: (newProduct) => {
       store.addProduct(newProduct)
-      queryClient.invalidateQueries({
-        queryKey: ['products'], // Clave de consulta que deseas invalidar
-      })
+      invalidateProducts()
     },
   })
 
@@ -52,9 +58,7 @@ export const useProducts = () => {
     mutationFn: updateProductById,
     onSuccess: (updatedProduct) => {
       store.updateProduct(updatedProduct)
-      queryClient.invalidateQueries({
-        queryKey: ['products'], // Clave de consulta que deseas invalidar
-      })
+      invalidateProducts()
     },
   })
 
@@ -63,9 +67,7 @@ export const useProducts = () => {
     mutationFn: deleteProductById,
     onSuccess: (_, productId) => {
       store.deleteProduct(productId as number)
-      queryClient.invalidateQueries({
-        queryKey: ['products'], // Clave de consulta que deseas invalidar
-      })
+      invalidateProducts()
     },
   })
 

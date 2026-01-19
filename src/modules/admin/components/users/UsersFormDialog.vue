@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, watch } from 'vue'
-import type { UserResponse } from '@/interfaces/users.interface'
-import type { Role } from '@/interfaces/users.interface'
+import { ref, watch } from 'vue'
+import type { Role, UserResponse } from '@/interfaces/users.interface'
 
 // Props para modo de edición
 const props = defineProps({

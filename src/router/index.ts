@@ -37,9 +37,10 @@ router.beforeEach(async (to, from, next) => {
 
   await authStore.checkAuthStatus()
   const isAuthenticated = authStore.getAuthStatus() === AuthStatus.Authenticated
+  const userRoles = authStore.getUser()?.roles || []
+  const requiredRole = to.meta.role as string | undefined
 
   if (to.name === 'Login' && isAuthenticated) {
-    const userRoles = authStore.getUser()?.roles || []
     if (userRoles.includes('ROLE_ADMIN')) {
       next({ name: 'OrdersManager' })
     } else {
@@ -48,8 +49,6 @@ router.beforeEach(async (to, from, next) => {
   } else if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'Login' })
   } else {
-    const userRoles = authStore.getUser()?.roles || []
-    const requiredRole = to.meta.role as string
     if (requiredRole && !userRoles.includes(requiredRole)) {
       next({ name: 'Login' })
     } else {

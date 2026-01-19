@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/vue-query'
 import { storeToRefs } from 'pinia'
 import { useAlarmsStore } from '@/stores/alarms.store'
 import { getAlarms } from '@/services/alarm.service'
+import type { AlarmResponse } from '@/interfaces/alarm.interface'
 
 /**
  * Gestiona la paginación y sincronización de alarmas de una orden.
@@ -36,32 +37,27 @@ export const useAlarms = (idOrder: string | number) => {
     enabled: hasOrderId,
   })
 
-  watch(
-    data,
-    (result) => {
-      if (result) {
-        store.setAlarms(result.alarms)
+  const syncAlarms = (result?: AlarmResponse) => {
+    if (!result) return
 
-        store.setPaginationData(
-          result.pagination.currentPage,
-          result.pagination.totalElements,
-          result.pagination.totalPages,
-        )
+    store.setAlarms(result.alarms)
+    store.setPaginationData(
+      result.pagination.currentPage,
+      result.pagination.totalElements,
+      result.pagination.totalPages,
+    )
+    store.alarms = [...result.alarms]
 
-        store.alarms = [...result.alarms]
+    // Buscar la alarma con status PENDING
+    const pendingAlarm = result.alarms.find((alarm) => alarm.status === 'PENDING')
+    if (pendingAlarm) {
+      store.setOrderAlarm(pendingAlarm)
+    } else {
+      store.clearOrderAlarm()
+    }
+  }
 
-        const alarmsArray = result.alarms
-        // Buscar la alarma con status PENDING
-        const pendingAlarm = alarmsArray.find((alarm: { status: string }) => alarm?.status === 'PENDING')
-        if (pendingAlarm) {
-          store.setOrderAlarm(pendingAlarm)
-        } else {
-          store.clearOrderAlarm()
-        }
-      }
-    },
-    { immediate: true },
-  )
+  watch(data, syncAlarms, { immediate: true })
 
   return {
     alarms,

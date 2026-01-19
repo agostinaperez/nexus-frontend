@@ -33,27 +33,27 @@ const props = defineProps({
   isLoading: Boolean,
 })
 
-const currentPage = ref(props.currentPage)
+const currentPageLocal = ref(props.currentPage)
 
 const handlePageChange = (page: number) => {
-  currentPage.value = page
+  currentPageLocal.value = page
   props.setPageA(page - 1)
 }
 
 watch(
   () => props.currentPage,
   (newPage) => {
-    currentPage.value = newPage
+    currentPageLocal.value = newPage
   },
 )
 
 // Encabezados de la tabla
-const headers = ref<Array<{ title: string; value: string; align?: 'start' | 'center' | 'end' }>>([
+const headers: Array<{ title: string; value: string; align?: 'start' | 'center' | 'end' }> = [
   { title: 'ID', value: 'id' },
   { title: 'Estado', value: 'status' },
   { title: 'Timestamp', value: 'timeStamp' },
   { title: 'Temperatura (°C)', value: 'temperature', align: 'center' },
-])
+]
 
 // Función para formatear la fecha
 const formatDate = (timestamp: string) => {
@@ -65,14 +65,14 @@ const formatTitleDate = (timestamp: string) => {
 }
 
 // Mapeo de estados a nombres y clases de estilo
-const getStatusInfo = (status: string) => {
-  const statusMap: Record<string, { name: string; class: string }> = {
-    ACKNOWLEDGED: { name: 'ACKNOWLEDGED', class: 'text-success' },
-    PENDING: { name: 'PENDING', class: 'text-warning' },
-    CONFIRMED_ISSUE: { name: 'CONFIRMED_ISSUE', class: 'text-danger' },
-  }
+const statusInfoMap: Record<string, { name: string; class: string }> = {
+  ACKNOWLEDGED: { name: 'ACKNOWLEDGED', class: 'text-success' },
+  PENDING: { name: 'PENDING', class: 'text-warning' },
+  CONFIRMED_ISSUE: { name: 'CONFIRMED_ISSUE', class: 'text-danger' },
+}
 
-  return statusMap[status] || { name: 'DESCONOCIDO', class: '' }
+const getStatusInfo = (status: string) => {
+  return statusInfoMap[status] || { name: 'DESCONOCIDO', class: '' }
 }
 
 // Función para asignar clases de temperatura
@@ -97,7 +97,7 @@ const getTemperatureClass = (temperature: number): string => {
       single-expand
       :items-per-page="pageSize"
       :loading="isLoading"
-      :page="currentPage"
+      :page="currentPageLocal"
       :items-length="totalElements"
       hide-default-footer
       @update:page="handlePageChange"
@@ -154,7 +154,7 @@ const getTemperatureClass = (temperature: number): string => {
       <template #bottom>
         <v-container class="d-flex justify-center">
           <v-pagination
-            :model-value="currentPage"
+            :model-value="currentPageLocal"
             :length="totalPages"
             :total-visible="5"
             @update:modelValue="handlePageChange"

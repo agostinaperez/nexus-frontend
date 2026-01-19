@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed, onMounted } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { OrderDetail } from '@/interfaces/order-details.interface'
 
 // Props para recibir datos
@@ -88,6 +88,8 @@ const series = ref<{ name: string; data: { x: number; y: number }[] }[]>([
   },
 ])
 
+const MAX_POINTS = 100
+
 // Función para ajustar el timestamp a la zona horaria local
 const adjustToLocalTime = (isoString: string) => {
   const date = new Date(isoString)
@@ -98,15 +100,12 @@ const adjustToLocalTime = (isoString: string) => {
 // Función para agregar un nuevo dato al gráfico
 const addDataPoint = (timestamp: string, value: number) => {
   const adjustedTimestamp = adjustToLocalTime(timestamp)
-  if (series.value[0] != undefined) {
-    series.value[0].data.push({ x: adjustedTimestamp, y: value })
+  series.value[0].data.push({ x: adjustedTimestamp, y: value })
 
-    series.value[0].data.sort((a, b) => a.x - b.x)
+  series.value[0].data.sort((a, b) => a.x - b.x)
 
-    const maxPoints = 100
-    if (series.value[0].data.length > maxPoints) {
-      series.value[0].data = series.value[0].data.slice(-maxPoints)
-    }
+  if (series.value[0].data.length > MAX_POINTS) {
+    series.value[0].data = series.value[0].data.slice(-MAX_POINTS)
   }
 }
 
@@ -119,9 +118,7 @@ watch(
         x: adjustToLocalTime(detail.timeStamp),
         y: detail.temperature,
       }))
-      if (series.value[0] != undefined) {
-        series.value[0].data = formattedData
-      }
+      series.value[0].data = formattedData
     }
   },
   { immediate: true },

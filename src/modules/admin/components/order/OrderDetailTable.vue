@@ -34,29 +34,29 @@ const props = defineProps({
 })
 
 //const emit = defineEmits(["update:page"]);
-const currentPage = ref(props.currentPage)
+const currentPageLocal = ref(props.currentPage)
 
 const handlePageChange = (page: number) => {
-  currentPage.value = page
+  currentPageLocal.value = page
   props.setPageD(page - 1)
 }
 
 watch(
   () => props.currentPage,
   (newPage) => {
-    currentPage.value = newPage
+    currentPageLocal.value = newPage
   },
 )
 
 //TABLA
 // Definición de encabezados de la tabla
-const headers = ref<Array<{ title: string; value: string; align?: 'start' | 'center' | 'end' }>>([
+const headers: Array<{ title: string; value: string; align?: 'start' | 'center' | 'end' }> = [
   { title: 'Timestamp', value: 'timestamp' },
   { title: 'Masa Acumulada (kg)', value: 'mass' },
   { title: 'Densidad (kg/m³)', value: 'density' },
   { title: 'Temperatura (°C)', value: 'temperature' },
   { title: 'Caudal (kg/h)', value: 'flowRate' },
-])
+]
 
 //TODO: la temperatura es de acuerdo a la del producto
 // Función para aplicar estilos condicionales a la temperatura
@@ -89,7 +89,7 @@ const formatTitleDate = (timestamp: string) => {
       class="elevation-1 tabla"
       :items-per-page="pageSize"
       :loading="isLoading"
-      :page="currentPage"
+      :page="currentPageLocal"
       :items-length="totalElements"
       hide-default-footer
       @update:page="handlePageChange"
@@ -123,7 +123,7 @@ const formatTitleDate = (timestamp: string) => {
       <template #bottom>
         <v-container class="d-flex justify-center">
           <v-pagination
-            :model-value="currentPage"
+            :model-value="currentPageLocal"
             :length="totalPages"
             :total-visible="5"
             @update:modelValue="handlePageChange"

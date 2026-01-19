@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed } from 'vue'
 import type { TableItem } from '@/interfaces/table-item.interface'
 import { format } from 'date-fns'
 
@@ -34,31 +34,23 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:page'])
-const currentPage = ref(props.currentPage)
+// La paginación visual es base 1, el backend usa base 0.
+const displayPage = computed(() => props.currentPage + 1)
 
 const handlePageChange = (page: number) => {
   // Emitir el evento de cambio de página con el índice base 1
   emit('update:page', page)
 }
 
-watch(
-  () => props.currentPage,
-  (newPage: number) => {
-    // Sincronizar el valor de currentPage con el valor recibido por props
-    currentPage.value = newPage + 1 // La paginación del componente es base 1
-  },
-  { immediate: true },
-)
-
 // Definición de los encabezados de la tabla
-const headers = ref<Array<{ title: string; value: string; align?: 'start' | 'center' | 'end' }>>([
+const headers: Array<{ title: string; value: string; align?: 'start' | 'center' | 'end' }> = [
   { title: 'Camión', value: 'truck' },
   { title: 'Cliente', value: 'client' },
   { title: 'Recepción', value: 'receptionDate' },
   { title: 'Carga', value: 'estimatedDate' },
   { title: 'Estado', value: 'status' },
   { title: 'Alarmas', value: 'alarmStatus' },
-])
+]
 
 // Normaliza el estado para evitar problemas de casing/idioma
 const normalizeState = (state: string | null | undefined): string =>
@@ -66,7 +58,6 @@ const normalizeState = (state: string | null | undefined): string =>
 
 // Función para aplicar estilos condicionales a las advertencias
 const getWarningClass = (warning: string): string => {
-  console.log('estado: ', warning)
   const normalized = normalizeState(warning)
   if (normalized === 'PENDING' || normalized === 'PENDIENTE') {
     return 'text-warning'
@@ -79,7 +70,6 @@ const getWarningClass = (warning: string): string => {
 }
 
 const getWarningLabel = (state: string): string => {
-  console.log(state)
   const normalized = normalizeState(state)
   if (normalized === 'PENDING' || normalized === 'PENDIENTE') return 'A REVISAR'
   if (normalized === 'CONFIRMED_ISSUE' || normalized === 'CONFIRMED ISSUE') return 'PROBLEMA'
@@ -154,7 +144,7 @@ const getOrderState = (status: string) => {
     <template #bottom>
       <v-container class="d-flex justify-center">
         <v-pagination
-          :model-value="currentPage"
+          :model-value="displayPage"
           :length="totalPages"
           :total-visible="pageSize"
           @update:modelValue="handlePageChange"

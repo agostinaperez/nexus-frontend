@@ -22,8 +22,8 @@ export const useAlarmHandler = () => {
     Error,
     { id: number; observation: string; newStatus: string }
   >({
-    mutationFn: async ({ id, observation, newStatus }) => {
-      return await setAlarmStatus(newStatus, { id, observation })
+    mutationFn: ({ id, observation, newStatus }) => {
+      return setAlarmStatus(newStatus, { id, observation })
     },
     onSuccess: (updatedAlarm: Alarm) => {
       alarmsStore.updateAlarm(updatedAlarm)

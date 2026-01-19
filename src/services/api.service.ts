@@ -12,7 +12,7 @@ export default () => {
 
   api.interceptors.request.use(
     async (config) => {
-      let token = localStorage.getItem('auth_token')
+      const token = localStorage.getItem('auth_token')
       config.headers['Authorization'] = 'Bearer ' + token
       return config
     },
@@ -27,7 +27,6 @@ export default () => {
       return response
     },
     async function (error) {
-      const originalRequest = error.config
       if (error.response.status === 401) {
         window.location.href = '/'
         return

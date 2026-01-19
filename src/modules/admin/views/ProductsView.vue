@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import AdminLayout from '../layouts/AdminLayout.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+
+import AdminLayout from '../layouts/AdminLayout.vue'
 import ProductsTable from '@/modules/admin/components/products/ProductsTable.vue'
 import ProductFormDialog from '@/modules/admin/components/products/ProductsFormDialog.vue'
+
 import { useProducts } from '@/composables/use.product'
 import type { Product } from '@/interfaces/products.interface'
 
@@ -14,20 +16,23 @@ const { products, isLoading, createProduct, updateProduct, deleteProduct, setSel
 const isDialogOpen = ref(false)
 const isEditMode = ref(false)
 const selectedProduct = ref<Product | null>(null)
+
+const openDialog = (mode: 'create' | 'edit', product?: Product) => {
+  const nextProduct = product ?? null
+  isEditMode.value = mode === 'edit'
+  selectedProduct.value = nextProduct
+  setSelectedProduct(nextProduct)
+  isDialogOpen.value = true
+}
+
 // Función para abrir el diálogo de agregar producto
 const addProduct = () => {
-  isEditMode.value = false
-  selectedProduct.value = null
-  setSelectedProduct(null)
-  isDialogOpen.value = true
+  openDialog('create')
 }
 
 // Función para abrir el diálogo de editar producto
 const editProduct = (product: Product) => {
-  isEditMode.value = true
-  selectedProduct.value = product
-  setSelectedProduct(product)
-  isDialogOpen.value = true
+  openDialog('edit', product)
 }
 
 // Función para manejar el envío del formulario

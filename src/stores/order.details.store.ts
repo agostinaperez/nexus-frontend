@@ -20,7 +20,7 @@ export const useOrderDetailsStore = defineStore('orderDetails', () => {
   // Order details for the current order (used for tables with pagination)
   const orderDetails = ref<OrderDetail[]>([])
 
-  // Almacena nueva alarma ws de una orden
+  // Almacena nuevo detalle ws de una orden
   const newDetailByOrden = ref<OrderDetail | null | undefined>()
 
   // All order details (used for graphs)
@@ -31,11 +31,13 @@ export const useOrderDetailsStore = defineStore('orderDetails', () => {
     orderDetails.value = [...details] // Forzar reactividad
   }
 
+  const MAX_TABLE_ITEMS = 5
+
   const addNewOrderDetail = (detail: OrderDetail) => {
     // Las tablas solo refrescan inmediatamente cuando se está en la primera página
     if (currentPageD.value !== 0) return
 
-    if (orderDetails.value.length === 5) {
+    if (orderDetails.value.length === MAX_TABLE_ITEMS) {
       // Si hay 5 elementos, eliminamos el último y agregamos el nuevo
       orderDetails.value = [
         ...[detail],
