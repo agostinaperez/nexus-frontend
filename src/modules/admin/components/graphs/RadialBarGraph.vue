@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, defineProps, watchEffect, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   order: {
@@ -51,12 +51,7 @@ const loadPercentage = computed(() => {
 })
 
 // Series del gráfico
-const series = ref([presetPercentage.value, loadPercentage.value])
-
-// Actualización dinámica de las series
-watch([presetPercentage, loadPercentage], () => {
-  series.value = [presetPercentage.value, loadPercentage.value]
-})
+const series = computed(() => [presetPercentage.value, loadPercentage.value])
 
 // Opciones del gráfico
 const chartOptions = ref({

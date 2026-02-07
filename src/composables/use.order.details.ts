@@ -1,9 +1,10 @@
-import { onUnmounted, watch } from 'vue'
+import { watch } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { storeToRefs } from 'pinia'
 
 import { useOrderDetailsStore } from '@/stores/order.details.store'
 import { getOrderDetails } from '@/services/order.details.service'
+import type { OrderDetailsResponse } from '@/interfaces/order-details.interface'
 
 /**
  * Maneja la tabla paginada de detalles de una orden.
@@ -36,30 +37,27 @@ export const useOrderDetails = (idOrder: string | number) => {
     enabled: hasOrderId,
   })
 
-  watch(
-    data,
-    (result) => {
-      if (result) {
-        store.setOrderDetails(result.details)
+  const syncOrderDetails = (result?: OrderDetailsResponse) => {
+    if (!result) return
 
-        store.setPaginationData(
-          result.pagination.currentPage,
-          result.pagination.totalElements,
-          result.pagination.totalPages,
-        )
+    store.setOrderDetails(result.details)
+    store.setPaginationData(
+      result.pagination.currentPage,
+      result.pagination.totalElements,
+      result.pagination.totalPages,
+    )
 
-        // Forzar actualización reactiva
-        store.orderDetails = [...result.details]
-      }
-    },
-    { immediate: true },
-  )
+    // Forzar actualización reactiva
+    store.orderDetails = [...result.details]
+  }
+
+  watch(data, syncOrderDetails, { immediate: true })
 
   return {
     // Properties
     orderDetails,
     currentPageD: currentPageD.value + 1,
-    currentPageD1: currentPageD,
+    currentPageDZeroBased: currentPageD,
     pageSizeD,
     sortByD,
     totalElementsD,

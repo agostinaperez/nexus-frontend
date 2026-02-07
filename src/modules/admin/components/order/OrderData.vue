@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { format, differenceInSeconds } from 'date-fns'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 import type { Order } from '@/interfaces/order.interface'
 import type { OrderDetail } from '@/interfaces/order-details.interface'
@@ -42,9 +42,6 @@ const formatDuration = (seconds: number): string => {
 // Ref para el tiempo transcurrido
 const elapsedTime = ref<string | null>(null)
 
-// Temporizador para actualizar el tiempo transcurrido
-let timer: ReturnType<typeof setInterval> | null = null
-
 const updateElapsedTime = () => {
   if (!props.order.fuelingStartDate && !props.order.fuelingEndDate) {
     elapsedTime.value = null
@@ -56,19 +53,13 @@ const updateElapsedTime = () => {
   elapsedTime.value = formatDuration(seconds)
 }
 
-// Configurar el temporizador cuando se monta el componente
+// Calcular el tiempo al montar el componente
 onMounted(() => {
   updateElapsedTime()
 })
 
-// Limpiar el temporizador cuando se desmonta el componente
-onUnmounted(() => {
-  if (timer) {
-    clearInterval(timer)
-  }
-})
-
 // Watch para recalcular tiempo cuando cambia `detail`
+// No hay temporizador activo; se recalcula solo con los cambios de detalle.
 watch(
   () => props.detail,
   () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
 import type { ConfirmAlarmDialogProps } from '@/interfaces/alarm-dialog.interface'
 
 const props = defineProps<ConfirmAlarmDialogProps>()

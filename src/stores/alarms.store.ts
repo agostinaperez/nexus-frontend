@@ -59,12 +59,14 @@ export const useAlarmsStore = defineStore('AlarmsWs', () => {
     alarms.value = newAlarms
   }
 
+  const MAX_TABLE_ITEMS = 5
+
   const addNewAlarm = (alarm: Alarm) => {
     // Solo se inserta en la tabla si el usuario está viendo la primera página
-    if (currentPageA.value != 0) return
+    if (currentPageA.value !== 0) return
 
     // La tabla muestra 5 filas; se inserta al inicio y se trunca la cola para mantener el tamaño fijo
-    if (alarms.value.length === 5) {
+    if (alarms.value.length === MAX_TABLE_ITEMS) {
       alarms.value = [alarm, ...alarms.value.slice(0, alarms.value.length - 1)]
     } else {
       alarms.value = [alarm, ...alarms.value]

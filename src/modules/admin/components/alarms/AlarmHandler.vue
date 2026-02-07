@@ -2,6 +2,7 @@
 import ConfirmAlarmDialog from './AlarmDialog.vue'
 import AlarmCard from './AlarmCard.vue'
 
+import { computed } from 'vue'
 import type { Alarm } from '@/interfaces/alarm.interface'
 import type { Order } from '@/interfaces/order.interface'
 
@@ -13,6 +14,14 @@ const props = defineProps<{
   isError: boolean
   isLoading: boolean
 }>()
+
+const isOrderInLoadingState = computed(
+  () => props.order?.status === 'REGISTERED_INITIAL_WEIGHING',
+)
+const hasPendingAlarm = computed(() => props.alarm?.status === 'PENDING')
+const shouldShowPendingCard = computed(
+  () => hasPendingAlarm.value && isOrderInLoadingState.value,
+)
 
 const handleDialogConfirm = (data: { alarmId: number; observation: string; action: string }) => {
   const newStatus = data.action === 'Confirmar' ? 'ACKNOWLEDGED' : 'CONFIRMED_ISSUE'
@@ -49,7 +58,7 @@ const formatDate = (timestamp: string): string => {
 
   <v-container v-else class="pa-0">
     <AlarmCard
-      v-if="alarm && alarm.status === 'PENDING' && order?.status == 'REGISTERED_INITIAL_WEIGHING'"
+      v-if="shouldShowPendingCard"
       title="¡ATENCIÓN!"
       :message="`Revisa los detalles de la alarma con ID ${
         alarm.id
@@ -79,7 +88,7 @@ const formatDate = (timestamp: string): string => {
     </AlarmCard>
 
     <AlarmCard
-      v-else-if="order?.status != 'REGISTERED_INITIAL_WEIGHING'"
+      v-else-if="!isOrderInLoadingState"
       title="La orden no está en estado de carga."
       message="Durante la carga de combustible, podrás gestionar las alarmas de precaución."
       variant="invalid"

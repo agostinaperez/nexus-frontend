@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, watch, onUnmounted } from 'vue'
+import { ref, watch } from 'vue'
 import type { Product } from '@/interfaces/products.interface'
 
 // Props
@@ -11,14 +11,16 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'submit'])
 
-// Datos del formulario
-const formData = ref<Omit<Product, 'id'>>({
+const createEmptyForm = (): Omit<Product, 'id'> => ({
   description: '',
   product: '',
   stock: 0,
   thresholdTemperature: 0,
   density: 0,
 })
+
+// Datos del formulario
+const formData = ref<Omit<Product, 'id'>>(createEmptyForm())
 
 // Sincronizar datos en modo edición
 watch(
@@ -46,13 +48,7 @@ watch(
   (newVal) => {
     if (newVal && !props.isEditMode) {
       // Resetear el formulario al abrir en modo "Agregar"
-      formData.value = {
-        description: '',
-        product: '',
-        stock: 0,
-        thresholdTemperature: 0,
-        density: 0,
-      }
+      formData.value = createEmptyForm()
     }
   },
 )

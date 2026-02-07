@@ -7,7 +7,6 @@ import { toast } from 'vue3-toastify'
 const dialog = ref(false)
 const orderNumber = ref<string | number | null>(null)
 const currentTemperature = ref(0)
-const thresholdTemperature = ref(-0.5)
 const alertDate = ref<string | null>(null)
 const lastAlertSignature = ref<string | null>(null)
 

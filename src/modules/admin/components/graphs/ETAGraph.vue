@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   order: {
@@ -21,15 +21,15 @@ const flowRate = ref(props.lastDetail?.flowRate || 0) // Caudal actual (kg/h)
 // ETA restante dinámico en minutos (no negativo)
 const etaMinutes = ref<number>(
   flowRate.value > 0
-    ? Math.max(0, Math.round((Math.max(0, preset.value - accumulatedMass.value) / flowRate.value) * 60))
+    ? Math.max(
+        0,
+        Math.round((Math.max(0, preset.value - accumulatedMass.value) / flowRate.value) * 60),
+      )
     : 0,
 )
 
-// Punto inicial para el cálculo del progreso
-const etaInitial = ref(etaMinutes.value)
-
-// Series inicial del gráfico
-const series = ref([100]) // Comienza al 100% por defecto
+// Series inicial del gráfico (100% por defecto hasta tener datos reales)
+const series = ref([100])
 
 // Configuración del gráfico con gradiente
 const chartOptions = ref({
@@ -77,19 +77,23 @@ const progress = computed(() => {
   return Math.min(100, (delivered / preset.value) * 100)
 })
 
+const calculateEtaMinutes = (remainingMass: number, currentFlowRate: number) => {
+  return currentFlowRate > 0 ? Math.max(0, Math.round((remainingMass / currentFlowRate) * 60)) : 0
+}
+
+const updateEtaSeries = () => {
+  const remainingMass = Math.max(0, preset.value - accumulatedMass.value)
+  etaMinutes.value = calculateEtaMinutes(remainingMass, flowRate.value)
+  series.value = [progress.value]
+}
+
 // Recalcular el ETA dinámicamente cuando cambian los parámetros
 watch(
   () => [props.lastDetail?.accumulatedMass, props.lastDetail?.flowRate],
   ([newAccumulatedMass, newFlowRate]) => {
     if (newAccumulatedMass !== undefined) accumulatedMass.value = newAccumulatedMass
     if (newFlowRate !== undefined) flowRate.value = newFlowRate
-
-    const remainingMass = Math.max(0, preset.value - accumulatedMass.value)
-    const newEtaMinutes =
-      flowRate.value > 0 ? Math.max(0, Math.round((remainingMass / flowRate.value) * 60)) : 0
-
-    etaMinutes.value = newEtaMinutes
-    series.value = [progress.value]
+    updateEtaSeries()
   },
 )
 </script>

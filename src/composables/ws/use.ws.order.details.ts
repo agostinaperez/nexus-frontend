@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, computed, toRefs, ref } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { useQueryClient } from '@tanstack/vue-query'
 
 import { webSocketService } from '@/services/ws.service'
@@ -19,7 +19,7 @@ export const useWsOrderDetail = (orderId: string | number) => {
   // Servicio WebSocket
   const { subscribe, unsubscribe } = webSocketService()
 
-  // Tópico de las alarmas recordatorios
+  // Tópico de detalles de la orden
   const hasOrderId = !!orderId
   const topic = hasOrderId ? `/topic/details/order/${orderId}` : ''
 

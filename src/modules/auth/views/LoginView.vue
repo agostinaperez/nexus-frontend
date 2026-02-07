@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useAuth } from '@/modules/auth/composables/use.auth'
 
-const { login, isLoading, isError, isSuccess } = useAuth()
+const { login, isLoading, isError } = useAuth()
 
 const loginForm = ref({
   username: '',
@@ -18,9 +18,10 @@ const togglePasswordVisibility = () => {
 //cuando uso el boton de iniciar sesion me loguea
 const handleLogin = async () => {
   try {
+    const { username, password } = loginForm.value
     await login({
-      username: loginForm.value.username,
-      password: loginForm.value.password,
+      username,
+      password,
     })
     errorMessage.value = ''
   } catch (error: any) {
@@ -60,7 +61,7 @@ const handleLogin = async () => {
                 v-model="loginForm.username"
                 placeholder="Ingresa tu usuario"
                 required
-                :disabled="isLoading.value"
+                :disabled="isLoading"
                 hide-details
                 bg-color="transparent"
                 density="comfortable"
@@ -78,7 +79,7 @@ const handleLogin = async () => {
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="Ingresa tu contraseña"
                 required
-                :disabled="isLoading.value"
+                :disabled="isLoading"
                 hide-details
                 bg-color="transparent"
                 density="comfortable"
@@ -92,18 +93,18 @@ const handleLogin = async () => {
             <!-- Botón de login -->
             <v-btn
               class="login-button mt-4"
-              :loading="isLoading.value"
-              :disabled="isLoading.value"
+              :loading="isLoading"
+              :disabled="isLoading"
               color="primary"
               type="submit"
               size="large"
               block
             >
-              <span v-if="!isLoading.value">Ingresar</span>
+              <span v-if="!isLoading">Ingresar</span>
             </v-btn>
             <!-- Mensaje de error -->
             <v-alert
-              v-if="isError.value"
+              v-if="isError"
               type="error"
               variant="tonal"
               class="mt-4 alert"

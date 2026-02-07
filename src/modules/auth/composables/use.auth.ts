@@ -50,9 +50,9 @@ export const useAuth = () => {
     login: authMutation.mutateAsync, // Usamos mutateAsync para esperar la mutación
     logout,
     checkAuthStatus,
-    isLoading: computed(() => authMutation.isPending),
-    isSuccess: computed(() => authMutation.isSuccess),
-    isError: computed(() => authMutation.isError),
+    isLoading: authMutation.isPending,
+    isSuccess: authMutation.isSuccess,
+    isError: authMutation.isError,
     isAuthenticated,
   }
 }

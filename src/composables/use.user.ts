@@ -22,6 +22,10 @@ export const useUsers = () => {
     staleTime: 0, // No cache
   })
 
+  const invalidateUsers = () => {
+    queryClient.invalidateQueries({ queryKey: ['users'] })
+  }
+
   watch(data, (result) => {
     if (Array.isArray(result)) {
       store.setUsers(result) // Pasar la lista completa al store
@@ -35,7 +39,7 @@ export const useUsers = () => {
     mutationFn: UserService.create,
     onSuccess: (newUser) => {
       store.addUser(newUser)
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      invalidateUsers()
     },
   })
 
@@ -44,7 +48,7 @@ export const useUsers = () => {
     mutationFn: UserService.update,
     onSuccess: (updatedUser) => {
       store.updateUser(updatedUser)
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      invalidateUsers()
     },
   })
 
@@ -53,7 +57,7 @@ export const useUsers = () => {
     mutationFn: UserService.delete,
     onSuccess: (_, userId) => {
       store.deleteUser(userId as number)
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      invalidateUsers()
     },
   })
 

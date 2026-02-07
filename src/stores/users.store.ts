@@ -14,21 +14,23 @@ export const useUsersStore = defineStore('users', () => {
   const externalUsers = ref<UserResponse[]>([])
   const selectedUser = ref<UserResponse | null>(null)
 
+  const isInternalUser = (user: UserResponse) => {
+    return user.roles.some((role) => role.name === 'ROLE_ADMIN')
+  }
+
+  const isExternalUser = (user: UserResponse) => {
+    return user.roles.some((role) => role.name.includes('CLI'))
+  }
+
   // Acciones
   const setUsers = (newUsers: UserResponse[]) => {
     users.value = newUsers
 
     // Filtrar usuarios internos
-    internalUsers.value = newUsers.filter((user) => {
-      const isInternal = user.roles.some((role) => role.name === 'ROLE_ADMIN')
-      return isInternal
-    })
+    internalUsers.value = newUsers.filter(isInternalUser)
 
     // Filtrar usuarios externos
-    externalUsers.value = newUsers.filter((user) => {
-      const isExternal = user.roles.some((role) => role.name.includes('CLI'))
-      return isExternal
-    })
+    externalUsers.value = newUsers.filter(isExternalUser)
   }
 
   const addUser = (user: UserResponse) => {
@@ -44,8 +46,7 @@ export const useUsersStore = defineStore('users', () => {
   }
 
   const deleteUser = (userId: number) => {
-    users.value = users.value.filter((u) => u.id !== userId)
-    setUsers(users.value) // Recalcular internos/externos
+    setUsers(users.value.filter((u) => u.id !== userId)) // Recalcular internos/externos
   }
 
   const setSelectedUser = (user: UserResponse | null) => {
