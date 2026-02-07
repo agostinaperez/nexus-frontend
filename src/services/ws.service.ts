@@ -5,6 +5,7 @@ let stompClient: StompClient | null = null
 
 const isConnected = ref(false)
 const activeSubscriptions = ref(0)
+let isActivating = false
 
 /**
  * Servicio STOMP centralizado.
@@ -17,12 +18,12 @@ const subscriptions: Record<string, { callback: (msg: any) => void; stompSubscri
 //con este servicio me conecto al backend para conexión bidireccional
 export const webSocketService = () => {
   const connect = (token: string) => {
-    if (isConnected.value) return
+    if (stompClient || isActivating) return
+
+    isActivating = true
 
     stompClient = new StompClient({
-      webSocketFactory: () => {
-        return new WebSocket(import.meta.env.VITE_WS_URL)
-      },
+      webSocketFactory: () => new WebSocket(import.meta.env.VITE_WS_URL),
 
       connectHeaders: {
         Authorization: `Bearer ${token}`,
@@ -31,15 +32,16 @@ export const webSocketService = () => {
       reconnectDelay: 5000,
 
       onConnect: () => {
+        console.log('STOMP CONNECTED')
         isConnected.value = true
-        console.log('WebSocket connected')
+        isActivating = false
 
         Object.entries(subscriptions).forEach(([topic, sub]) => {
           if (!sub.stompSubscription) {
             sub.stompSubscription = stompClient!.subscribe(topic, (message: IMessage) => {
               try {
                 sub.callback(JSON.parse(message.body))
-              } catch (e) {
+              } catch {
                 console.error('Invalid JSON message:', message.body)
               }
             })
@@ -48,18 +50,15 @@ export const webSocketService = () => {
         })
       },
 
-      onStompError: (frame) => {
-        console.error('STOMP error', frame)
-        isConnected.value = false
-      },
-
       onWebSocketClose: () => {
         console.log('WebSocket closed')
         isConnected.value = false
+        isActivating = false
+        stompClient = null
       },
 
-      onWebSocketError: (err) => {
-        console.error('WebSocket error', err)
+      onStompError: (frame) => {
+        console.error('STOMP error', frame)
         isConnected.value = false
       },
     })
