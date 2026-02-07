@@ -30,10 +30,17 @@ export const webSocketService = () => {
         isConnected.value = true
         console.log('WebSocket connected')
 
-        // 🔄 Re-suscribir todos los tópicos después de reconectar
-        Object.keys(subscriptions).forEach((topic) => {
-          const sub = subscriptions[topic]
-          if (sub) subscribe(topic, sub.callback)
+        Object.entries(subscriptions).forEach(([topic, sub]) => {
+          if (!sub.stompSubscription) {
+            sub.stompSubscription = stompClient!.subscribe(topic, (message: IMessage) => {
+              try {
+                sub.callback(JSON.parse(message.body))
+              } catch (e) {
+                console.error('Invalid JSON message:', message.body)
+              }
+            })
+            activeSubscriptions.value++
+          }
         })
       },
 
@@ -57,24 +64,24 @@ export const webSocketService = () => {
   }
 
   const subscribe = (topic: string, callback: (msg: any) => void) => {
-    // Si NO está conectado -> almacenar suscripción para cuando conecte
-    if (!stompClient || !isConnected.value) {
-      subscriptions[topic] = { callback, stompSubscription: null }
-      return
-    }
+    // registrar intención
+    subscriptions[topic] ??= { callback, stompSubscription: null }
 
-    activeSubscriptions.value++
+    // todavía no conectado → listo
+    if (!stompClient || !isConnected.value) return
 
-    const stompSubscription = stompClient.subscribe(topic, (message: IMessage) => {
+    // ya existe → no volver a suscribir
+    if (subscriptions[topic].stompSubscription) return
+
+    subscriptions[topic].stompSubscription = stompClient.subscribe(topic, (message: IMessage) => {
       try {
-        const parsed = JSON.parse(message.body)
-        callback(parsed)
+        callback(JSON.parse(message.body))
       } catch (e) {
         console.error('Invalid JSON message:', message.body)
       }
     })
 
-    subscriptions[topic] = { callback, stompSubscription }
+    activeSubscriptions.value++
   }
 
   const unsubscribe = (topic: string) => {
