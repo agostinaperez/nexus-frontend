@@ -20,10 +20,14 @@ export const webSocketService = () => {
     if (isConnected.value) return
 
     stompClient = new StompClient({
-      brokerURL: import.meta.env.VITE_WS_URL,
-      connectHeaders: { Authorization: `Bearer ${token}` },
+      webSocketFactory: () => {
+        return new WebSocket(import.meta.env.VITE_WS_URL)
+      },
 
-      // 🔄 Reintento automático de reconexión
+      connectHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+
       reconnectDelay: 5000,
 
       onConnect: () => {
@@ -44,18 +48,18 @@ export const webSocketService = () => {
         })
       },
 
-      onStompError(error) {
-        console.error('STOMP error:', error)
+      onStompError: (frame) => {
+        console.error('STOMP error', frame)
         isConnected.value = false
       },
 
-      onWebSocketClose() {
+      onWebSocketClose: () => {
         console.log('WebSocket closed')
         isConnected.value = false
       },
 
-      onWebSocketError(error) {
-        console.error('WebSocket error:', error)
+      onWebSocketError: (err) => {
+        console.error('WebSocket error', err)
         isConnected.value = false
       },
     })
