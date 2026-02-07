@@ -20,7 +20,7 @@ export const webSocketService = () => {
     if (isConnected.value) return
 
     stompClient = new StompClient({
-      brokerURL: 'ws://localhost:8080/notifier',
+      brokerURL: import.meta.env.VITE_WS_URL,
       connectHeaders: { Authorization: `Bearer ${token}` },
 
       // 🔄 Reintento automático de reconexión
