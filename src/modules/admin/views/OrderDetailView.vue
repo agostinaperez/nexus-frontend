@@ -32,13 +32,11 @@ const showDetails = ref(false)
 // DATOS DE LA ORDEN
 const getOrderNumberFromRoute = () => {
   const { id } = route.params
-  return Array.isArray(id) ? id[0] ?? '' : id ?? ''
+  return Array.isArray(id) ? (id[0] ?? '') : (id ?? '')
 }
 const orderNumber = ref(getOrderNumberFromRoute())
 const { order } = useOrder(orderNumber.value)
-const canDownloadConciliation = computed(
-  () => order.value?.status === 'REGISTERED_FINAL_WEIGHING',
-)
+const canDownloadConciliation = computed(() => order.value?.status === 'REGISTERED_FINAL_WEIGHING')
 
 // TABLA DE DETALLES
 const {
@@ -74,7 +72,9 @@ const {
 } = useAlarms(orderNumber.value)
 const { alarm } = useWsAlarms(orderNumber.value)
 
-watch(alarm, refetchA)
+watch(alarm, () => {
+  void refetchA()
+})
 
 const currentAlarm = computed(() => {
   const wsAlarm = alarm.value
@@ -94,6 +94,20 @@ const alarmStatus = computed(() => {
 // GRAFICOS
 const { allOrderDetails } = useAllOrderDetails(orderNumber.value) // Todos los detalles de la orden, para dibujar los graficos
 const { lastDetail } = useWsLatestOrderDetails(orderNumber.value) // Ultimo detalle de la orden, para actualizar los graficos en tiempo real
+
+// Si no llega `lastDetail` por WS (al entrar a una orden con historial), tomar el último detalle del historial
+const latestFromAll = computed(() => {
+  const arr = allOrderDetails.value || []
+  if (!arr.length) return null
+  // Elegir el detalle con timestamp más reciente (asume ISO strings comparables)
+  return arr.reduce((a, b) => (a.timeStamp > b.timeStamp ? a : b))
+})
+
+const displayLastDetail = computed(() => lastDetail.value ?? latestFromAll.value ?? null)
+
+watch(lastDetail, (val) => {
+  console.log('lastDetail ( padre )', val)
+})
 
 // CONCILIACION
 const { downloadConciliation, isDownloading } = useOrderConciliation()
@@ -182,10 +196,20 @@ const closeDetails = () => {
 
       <v-row class="row-base content-row">
         <v-col cols="12" md="7">
-          <OrderData v-if="order" :order="order" :detail="lastDetail" class="full-card" />
+          <OrderData v-if="order" :order="order" :detail="displayLastDetail" class="full-card" />
         </v-col>
         <v-col cols="12" md="5">
-          <ETA v-if="order" :order="order" :last-detail="lastDetail" />
+          <template v-if="order">
+            <ETA
+              v-if="order.status !== 'CLOSED' && order.status !== 'REGISTERED_FINAL_WEIGHING'"
+              :order="order"
+              :last-detail="displayLastDetail"
+            />
+            <v-card v-else class="data-container" color="container-color" outlined>
+              <v-card-title>Tiempo estimado</v-card-title>
+              <v-card-text>La carga ya ha sido completada!</v-card-text>
+            </v-card>
+          </template>
         </v-col>
       </v-row>
 
@@ -274,7 +298,7 @@ const closeDetails = () => {
 
             <v-row class="row-base graph-row mt-2" justify="start">
               <v-col cols="12" md="6">
-                <RadialBar v-if="order" :order="order" :last-detail="lastDetail" />
+                <RadialBar v-if="order" :order="order" :last-detail="displayLastDetail" />
               </v-col>
               <v-col cols="12" md="6">
                 <OrderDetailTable
@@ -291,17 +315,20 @@ const closeDetails = () => {
 
             <v-row class="row-base graph-row mt-4" justify="start">
               <v-col cols="12">
-                <TemperatureChart :allOrderDetails="allOrderDetails" :lastDetail="lastDetail" />
+                <TemperatureChart
+                  :allOrderDetails="allOrderDetails"
+                  :lastDetail="displayLastDetail"
+                />
               </v-col>
             </v-row>
 
             <v-row class="row-base graph-row mt-4" justify="start">
               <v-col cols="12" md="6">
-                <FlowRateGraph :allOrderDetails="allOrderDetails" :lastDetail="lastDetail" />
+                <FlowRateGraph :allOrderDetails="allOrderDetails" :lastDetail="displayLastDetail" />
               </v-col>
 
               <v-col cols="12" md="6">
-                <DensityGraph :allOrderDetails="allOrderDetails" :lastDetail="lastDetail" />
+                <DensityGraph :allOrderDetails="allOrderDetails" :lastDetail="displayLastDetail" />
               </v-col>
             </v-row>
           </div>

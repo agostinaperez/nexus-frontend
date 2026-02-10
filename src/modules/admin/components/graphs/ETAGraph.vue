@@ -14,9 +14,9 @@ const props = defineProps({
 })
 
 // Parámetros obtenidos de las props
-const preset = ref(props.order.preset || 0) // Masa total requerida (kg)
-const accumulatedMass = ref(props.lastDetail?.accumulatedMass || 0) // Masa acumulada actual (kg)
-const flowRate = ref(props.lastDetail?.flowRate || 0) // Caudal actual (kg/h)
+const preset = ref<number>(props.order.preset ?? 0) // Masa total requerida (kg)
+const accumulatedMass = ref<number>(props.lastDetail?.accumulatedMass ?? 0) // Masa acumulada actual (kg)
+const flowRate = ref<number>(props.lastDetail?.flowRate ?? 0) // Caudal actual (kg/h)
 
 // ETA restante dinámico en minutos (no negativo)
 const etaMinutes = ref<number>(
@@ -28,8 +28,8 @@ const etaMinutes = ref<number>(
     : 0,
 )
 
-// Series inicial del gráfico (100% por defecto hasta tener datos reales)
-const series = ref([100])
+// Series actualizadas según el progreso
+const series = computed(() => [progress.value])
 
 // Configuración del gráfico con gradiente
 const chartOptions = ref({
@@ -84,17 +84,31 @@ const calculateEtaMinutes = (remainingMass: number, currentFlowRate: number) => 
 const updateEtaSeries = () => {
   const remainingMass = Math.max(0, preset.value - accumulatedMass.value)
   etaMinutes.value = calculateEtaMinutes(remainingMass, flowRate.value)
-  series.value = [progress.value]
+
+  // Log para ver qué valores está usando
+  console.log({
+    preset: preset.value,
+    accumulatedMass: accumulatedMass.value,
+    flowRate: flowRate.value,
+    remainingMass,
+    etaMinutes: etaMinutes.value,
+    progress: progress.value,
+    lastDetail: props.lastDetail,
+  })
 }
 
-// Recalcular el ETA dinámicamente cuando cambian los parámetros
+// Recalcular eta y series cuando cambian preset, accumulatedMass o flowRate
 watch(
-  () => [props.lastDetail?.accumulatedMass, props.lastDetail?.flowRate],
-  ([newAccumulatedMass, newFlowRate]) => {
-    if (newAccumulatedMass !== undefined) accumulatedMass.value = newAccumulatedMass
-    if (newFlowRate !== undefined) flowRate.value = newFlowRate
+  () => [props.order.preset, props.lastDetail],
+  ([newPreset, newLastDetail]) => {
+    if (newPreset !== undefined) preset.value = newPreset
+    if (newLastDetail !== undefined && newLastDetail !== null) {
+      accumulatedMass.value = newLastDetail.accumulatedMass ?? 0
+      flowRate.value = newLastDetail.flowRate ?? 0
+    }
     updateEtaSeries()
   },
+  { immediate: true },
 )
 </script>
 
