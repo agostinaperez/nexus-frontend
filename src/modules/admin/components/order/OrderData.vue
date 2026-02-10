@@ -143,6 +143,14 @@ const getOrderState = (status: string) => {
             color="primary"
             class="mt-2"
             v-if="order.status == 'REGISTERED_INITIAL_WEIGHING' && order.fuelingStartDate"
+            style="
+              white-space: pre-line;
+              display: flex;
+              flex-direction: column;
+              gap: 2px;
+              text-align: center;
+              min-width: 120px;
+            "
           >
             Tiempo Transcurrido (entre pesajes inicial y final): {{ elapsedTime }}
           </v-chip>

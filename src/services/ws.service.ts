@@ -25,6 +25,9 @@ export const webSocketService = () => {
     stompClient = new StompClient({
       webSocketFactory: () => new WebSocket(import.meta.env.VITE_WS_URL),
 
+      // Habilitar debug para ver mensajes STOMP en consola (útil en prod para diagnosticar suscripciones)
+      debug: (msg: string) => console.debug('[STOMP]', msg),
+
       connectHeaders: {
         Authorization: `Bearer ${token}`,
       },
@@ -33,6 +36,7 @@ export const webSocketService = () => {
 
       onConnect: () => {
         console.log('STOMP CONNECTED')
+        console.log('Registered topics to subscribe:', Object.keys(subscriptions))
         isConnected.value = true
         isActivating = false
 
