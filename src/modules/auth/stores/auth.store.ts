@@ -7,6 +7,7 @@ import { AuthStatus } from '@/modules/auth/interfaces/auth.interface'
 import { validateToken } from '@/modules/auth/services/auth.service'
 
 import { webSocketService } from '@/services/ws.service'
+import { useAlarmsStore } from '@/stores/alarms.store'
 
 const wsService = webSocketService()
 
@@ -39,6 +40,22 @@ export const useAuthStore = defineStore('auth', () => {
 
     wsService.connect(token) // Conectar sesion WebSocket
 
+    // Suscripción global a alarmas recordatorio para mostrar modal/notifications en cualquier vista
+    try {
+      const alarmsStore = useAlarmsStore()
+      wsService.subscribe('/topic/alarms/reminders', (msg: any) => {
+        try {
+          // msg puede ser array o un solo objeto
+          const payload = Array.isArray(msg) ? msg : [msg]
+          alarmsStore.setRemindersAlarms(payload)
+        } catch (e) {
+          console.error('Failed to process reminders alarm message', e)
+        }
+      })
+    } catch (e) {
+      console.error('Failed to subscribe to reminders topic', e)
+    }
+
     if (user.roles.includes('ROLE_ADMIN')) {
       router.push({ name: 'OrdersManager' })
     }
@@ -51,6 +68,12 @@ export const useAuthStore = defineStore('auth', () => {
 
     localStorage.removeItem('auth_token') // Limpiar token de localStorage
 
+    // Unsubscribe from global reminders and disconnect websocket
+    try {
+      wsService.unsubscribe('/topic/alarms/reminders')
+    } catch (e) {
+      console.error('Failed to unsubscribe reminders topic', e)
+    }
     wsService.disconnect() // Desconectar sesion WebSocket
   }
 
@@ -70,6 +93,21 @@ export const useAuthStore = defineStore('auth', () => {
       authStatus.value = AuthStatus.Authenticated
 
       wsService.connect(token) // Conectar sesion WebSocket
+
+      // Asegurar suscripción global a reminders si no existía
+      try {
+        const alarmsStore = useAlarmsStore()
+        wsService.subscribe('/topic/alarms/reminders', (msg: any) => {
+          try {
+            const payload = Array.isArray(msg) ? msg : [msg]
+            alarmsStore.setRemindersAlarms(payload)
+          } catch (e) {
+            console.error('Failed to process reminders alarm message', e)
+          }
+        })
+      } catch (e) {
+        console.error('Failed to subscribe to reminders topic', e)
+      }
     } catch (error) {
       logout() // Si el token es inválido, hacer logout
     }

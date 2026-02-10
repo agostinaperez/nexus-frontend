@@ -25,6 +25,25 @@ export const useWsAlarms = (idOrder: string | number) => {
   const handleMessage = (message: Alarm) => {
     queryClient.setQueryData(['alarm'], message)
     store.updateAlarm(message)
+
+    console.log('use.ws.alarms received alarm:', message)
+
+    // Si la alarma llega con estado PENDING, también publicarla en `remindersAlarms`
+    // para que los recordatorios / modal global lo reciban en tiempo real.
+    try {
+      if (message?.status === 'PENDING') {
+        // Append to existing reminders to ensure watchEffect detects change
+        const existing = Array.isArray(store.getRemindersAlarms()) ? store.getRemindersAlarms() : []
+        store.setRemindersAlarms([message, ...existing])
+        console.log(
+          'use.ws.alarms updated remindersAlarms, length=',
+          (store.getRemindersAlarms() || []).length,
+        )
+      }
+    } catch (e) {
+      // no bloquear en caso de errores menores
+      console.error('Failed to set reminders alarm', e)
+    }
   }
 
   onMounted(() => {

@@ -58,7 +58,16 @@ export const webSocketService = () => {
         console.log('WebSocket closed')
         isConnected.value = false
         isActivating = false
-        stompClient = null
+        // marcar las suscripciones internas como "no activas" para que onConnect las resuscriba
+        Object.keys(subscriptions).forEach((t) => {
+          const sub = subscriptions[t]
+          if (sub) {
+            sub.stompSubscription = null
+          }
+        })
+        // en este momento no hay subs activas
+        activeSubscriptions.value = 0
+        // NO hacer stompClient = null aquí — permitir que el cliente maneje la reconexión interna
       },
 
       onStompError: (frame) => {
@@ -71,18 +80,26 @@ export const webSocketService = () => {
   }
 
   const subscribe = (topic: string, callback: (msg: any) => void) => {
-    // registrar intención
-    subscriptions[topic] ??= { callback, stompSubscription: null }
+    // registrar intención y actualizar callback
+    if (!subscriptions[topic]) {
+      subscriptions[topic] = { callback, stompSubscription: null }
+    } else {
+      subscriptions[topic].callback = callback
+    }
 
     // todavía no conectado → listo
     if (!stompClient || !isConnected.value) return
 
-    // ya existe → no volver a suscribir
+    // ya existe suscripción activa → no volver a suscribir
     if (subscriptions[topic].stompSubscription) return
 
     subscriptions[topic].stompSubscription = stompClient.subscribe(topic, (message: IMessage) => {
       try {
-        callback(JSON.parse(message.body))
+        // usar siempre el callback registrado en el map (puede haber sido actualizado)
+        const sub = subscriptions[topic]
+        if (sub && sub.callback) {
+          sub.callback(JSON.parse(message.body))
+        }
       } catch (e) {
         console.error('Invalid JSON message:', message.body)
       }
