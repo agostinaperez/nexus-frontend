@@ -152,7 +152,7 @@ const getOrderState = (status: string) => {
               min-width: 120px;
             "
           >
-            Tiempo Transcurrido (entre pesajes inicial y final): {{ elapsedTime }}
+            Tiempo Transcurrido: {{ elapsedTime }}
           </v-chip>
 
           <v-chip
