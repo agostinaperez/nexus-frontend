@@ -50,8 +50,8 @@ const loadPercentage = computed(() => {
   return presetKg.value > 0 ? (currentLoadKg.value / presetKg.value) * 100 : 0
 })
 
-// Series del gráfico
-const series = computed(() => [presetPercentage.value, loadPercentage.value])
+// Series del gráfico (solo % de carga actual respecto al preset)
+const series = computed(() => [loadPercentage.value])
 
 // Opciones del gráfico
 const chartOptions = ref({
@@ -111,8 +111,8 @@ const chartOptions = ref({
       opacityTo: 0.85,
     },
   },
-  colors: ['#2F9B6F', '#48C78E'],
-  labels: ['Cap. Total y Preset', 'Carga Actual'],
+  colors: ['#48C78E'],
+  labels: ['Carga Actual'],
   tooltip: {
     enabled: true,
     theme: 'dark',
@@ -126,15 +126,9 @@ const chartOptions = ref({
       colors: ['#E8EDF2'],
     },
     y: {
-      formatter: (val: number, opts: any) => {
-        if (opts.seriesIndex === 0) {
-          return `Capacidad Total: ${totalCapacityKg.value.toFixed(
-            2,
-          )} kg (Preset: ${presetKg.value.toFixed(2)} kg)`
-        } else if (opts.seriesIndex === 1) {
-          return `Carga Actual: ${currentLoadKg.value.toFixed(2)} kg`
-        }
-        return ''
+      formatter: (val: number) => {
+        // val es el porcentaje mostrado (ej: 60)
+        return `Carga Actual: ${currentLoadKg.value.toFixed(2)} kg (Preset: ${presetKg.value.toFixed(2)} kg)`
       },
     },
   },
