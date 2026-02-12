@@ -120,10 +120,12 @@ const getOrderState = (status: string) => {
             <strong>Inicio de Carga:</strong>
             {{ formatDate(order.fuelingStartDate) || 'No disponible' }}
           </p>
-          <p>
-            <strong>Fin de Carga:</strong>
-            {{ formatDate(order.fuelingEndDate) || 'No disponible' }}
-          </p>
+          <template v-if="order.status !== 'REGISTERED_INITIAL_WEIGHING'">
+            <p>
+              <strong>Fin de Carga:</strong>
+              {{ formatDate(order.fuelingEndDate) || 'No disponible' }}
+            </p>
+          </template>
           <p>
             <strong>Fecha de Pesaje Final:</strong>
             {{ formatDate(order.finalWeighingDate) || 'No disponible' }}
